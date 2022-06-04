@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/blocs/repos/verse_repo.dart';
 import 'package:ible/blocs/verse/verse_bloc.dart';
 import 'package:ible/models/category_model.dart';
@@ -33,6 +34,7 @@ class _AddScripturePageState extends State<AddScripturePage>
   String _categoryHintText = "Type new category name";
   TextEditingController _categoryTextEditingController =
       TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +49,19 @@ class _AddScripturePageState extends State<AddScripturePage>
         _categoryTextEditingController.clear();
       });
     });
+    _categoryTextEditingController
+      ..addListener(() {
+        final len =
+            BlocProvider.of<CategoriesBloc>(context).state.categories?.length ??
+                2;
+        Category category1 = Category(
+            id: len + 1,
+            title: _categoryTextEditingController.text,
+            catId: _categoryTextEditingController.text);
+
+        BlocProvider.of<VerseBloc>(context)
+          ..add(VerseEventUpdateCategory(category: category1));
+      });
     if (this._selectedCategory != null) {
       this._selectedIndexValue = 1;
       this._upTabController!.index = 1;
@@ -174,7 +189,11 @@ class _AddScripturePageState extends State<AddScripturePage>
                                       },
                                       child: ScriptureInputFormField(
                                         labelText: 'Type verse address',
-                                        prefixIcon: Icon(Icons.search,color: Colors.grey,size: 30,),
+                                        prefixIcon: Icon(
+                                          Icons.search,
+                                          color: Colors.grey,
+                                          size: 30,
+                                        ),
                                         onChanged: (newValue) {
                                           context.read<VerseBloc>().add(
                                               VerseEventSearchVerse(
@@ -231,20 +250,22 @@ class _AddScripturePageState extends State<AddScripturePage>
                                                 IconSlideAction(
                                                   caption: 'DELETE',
                                                   color: ThemeColors.redDD4C4F,
-                                                  iconWidget: ImageIcon(
-                                                    AssetImage(
-                                                        'assets/images/icons/delete.png'),
-                                                    color: Colors.transparent,
+                                                  iconWidget: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 8.0),
+                                                    child: ImageIcon(
+                                                      AssetImage(
+                                                          'assets/images/icons/delete.png'),
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
                                                   onTap: () async {
-                                                    setState(() {
-                                                      //  _verseTextEditingController
-                                                      //   .clear();
-                                                      //_scriptureResults
-                                                      // .removeAt(position);
-                                                      // _scriptures += _scriptureResults;
-                                                      // _scriptureResults = [];
-                                                    });
+                                                    context.read<VerseBloc>()
+                                                      ..add(VerseEventDeleteVerse(
+                                                          verse: state.verses?[
+                                                                  position] ??
+                                                              Passage.empty()));
                                                   },
                                                 ),
                                               ],
@@ -258,7 +279,6 @@ class _AddScripturePageState extends State<AddScripturePage>
                                             color: ThemeColors.greyB2B2B2,
                                           ),
                                         ),
-                                        
                                       ],
                                     ),
                                   ),
@@ -266,24 +286,25 @@ class _AddScripturePageState extends State<AddScripturePage>
                               ),
                             ),
                             Divider(
-                        color: ThemeColors.greyB2B2B2,
-                        height: 1,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16.0, right: 16, top: 4),
-                        child: _buildSaveButton(context),
-                      ),
-                          ])),
-                ));
-          },
-        ));
-  }
-   _buildSaveButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0, top: 8),
-      child: OutlinedButton(
-        onPressed: () async {
-         /*  bool hasError = false;
+                              color: ThemeColors.greyB2B2B2,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.0, right: 16, top: 4),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 16.0, top: 8),
+                                child: OutlinedButton(
+                                  onPressed: () async {
+                                    context.read<VerseBloc>().add(
+                                        VerseEventSaveScripture(
+                                            verses: state.verses ?? [],
+                                            isNew: _categoryHintText ==
+                                                "Type new category name"));
+                                    Navigator.pop(context);
+                                    //context.read<VerseBloc>()..add()
+                                    /*  bool hasError = false;
 
           _verseTextEditingError = _scriptures.length <= 0;
           _categoryTextEditingError = _selectedCategory == null ||
@@ -342,26 +363,37 @@ class _AddScripturePageState extends State<AddScripturePage>
             Scaffold.of(context)
                 .showSnackBar(SnackBar(content: Text("Failed to save")));
           } */
-        },
-        style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(13.0),
-          ),
-          side: BorderSide(width: 2, color: Color(0xFFA7B0B3)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 18),
-          child: Text(
-            'Save',
-            style: Theme.of(context).textTheme.headline6!.copyWith(
-                  color: ThemeColors.saveText(context),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'SFUIText',
-                ),
-          ),
-        ),
-      ),
-    );
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(13.0),
+                                    ),
+                                    side: BorderSide(
+                                        width: 2, color: Color(0xFFA7B0B3)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 28.0, vertical: 18),
+                                    child: Text(
+                                      'Save',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline6!
+                                          .copyWith(
+                                            color:
+                                                ThemeColors.saveText(context),
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: 'SFUIText',
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ])),
+                ));
+          },
+        ));
   }
 }

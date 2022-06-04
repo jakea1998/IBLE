@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ible/blocs/repos/base_verse_repo.dart';
 import 'package:ible/blocs/repos/version_repo.dart';
 import 'package:ible/blocs/utils/constants.dart';
+import 'package:ible/models/category_model.dart';
 import 'package:ible/models/passage_model.dart';
 import 'package:ible/models/verse_model.dart';
 import 'package:http/http.dart' as http;
@@ -8,15 +10,16 @@ import 'dart:async';
 import 'dart:convert';
 
 class VerseRepo extends BaseVerseRepo {
+  FirebaseFirestore _fs = FirebaseFirestore.instance;
   @override
-  Future<dynamic> getVerses({required String userId}) async {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> saveVerse({required String verseId, required String userId}) {
-    // TODO: implement saveVerse
-    throw UnimplementedError();
+  Stream<List<Passage>> getVerses({required String userId}) {
+    return _fs
+        .collection("Verses")
+        .doc(userId)
+        .collection("PersonalVerses")
+        .snapshots()
+        .map((event) =>
+            event.docs.map((e) => Passage.fromJson(e.data())).toList());
   }
 
   @override
@@ -40,10 +43,38 @@ class VerseRepo extends BaseVerseRepo {
       final verses = json1['data']['passages'];
       print(verses);
       final mapped = verses.map<Passage>((e) => Passage.fromJson(e)).toList();
-      
+
       print(mapped);
       return mapped;
     }
+  }
+
+  @override
+  Future<void> saveVerses(
+      {required bool isNew,
+      required Category category,
+      required List<Passage> verses,
+      required String userId}) async {
+    // TODO: implement saveVerses
+    final batch = _fs.batch();
+    if (isNew)
+      await _fs
+          .collection("Categories")
+          .doc(userId)
+          .collection("PersonalCategories")
+          .doc(category.catId)
+          .set(category.toJson());
+    verses.forEach((element) async {
+      Passage verse = element;
+      
+      final docRef = _fs
+          .collection("Verses")
+          .doc(userId)
+          .collection("PersonalVerses")
+          .doc(element.id);
+      batch.set(docRef, element.toJson());
+    });
+    batch.commit();
   }
 }
 

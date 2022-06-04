@@ -17,15 +17,18 @@ part 'sign_up_state.dart';
 
 class SignupBloc extends Bloc<SignupEvent, SignupState>
     with EmailAndPasswordValidators {
+        final AuthenticationRepository _authenticationRepository;
+
+  String? _email;
   SignupBloc({required AuthenticationRepository authenticationRepository})
       : assert(authenticationRepository != null),
         _authenticationRepository = authenticationRepository,
-        super(SignupState.empty());
-  final AuthenticationRepository _authenticationRepository;
+        super(SignupState.empty()){
 
-  String? _email;
+        }
 
-  @override
+
+/*   @override
   Stream<Transition<SignupEvent, SignupState>> transformEvents(
     Stream<SignupEvent> events,
     TransitionFunction<SignupEvent, SignupState> transitionFn,
@@ -44,7 +47,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState>
       nonDebounceStream.mergeWith([debounceStream]),
       transitionFn,
     );
-  }
+  } */
 
   @override
   Stream<SignupState> mapEventToState(

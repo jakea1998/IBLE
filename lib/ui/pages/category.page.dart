@@ -2,7 +2,9 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:ible/blocs/categories/categories_bloc.dart';
 
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/scripture_model.dart';
@@ -16,8 +18,6 @@ import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
 import 'package:ible/ui/widgets/sliding_scaffold.widget.dart';
 
 import 'package:provider/provider.dart';
-
-
 
 class CategoryPage extends StatefulWidget {
   final Category? category;
@@ -36,38 +36,49 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return SlidingScaffold(
-      // drawer: IbleDrawer(),
-     /*  appBar: AppBar(
-        title: Text(widget.category?.title ?? '',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 30),),
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        elevation: 0,
-        leading: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: ImageIcon(
-                                AssetImage('assets/images/icons/menu.png'),
-                                color: ThemeColors.appBarIconColor,
-                                size: Theme.of(context).iconTheme.size,
-                              ),
-                            ),), */
-      
-       actions: [
-          IconButton(icon: Icon(Icons.more_vert,color: ThemeColors.appBarIconColor,),onPressed: (){},),
-          IconButton(icon: Icon(Icons.ios_share,color: ThemeColors.appBarIconColor,),onPressed: (){},),
-        ],
-        appBarColor: Colors.white,
-        title: Text(widget.category?.title ?? '',style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 30),),
-       onWillOpen: () {
-          if (slidableController.activeState != null) {
-            slidableController.activeState?.close();
-            return false;
-          } else
-            return true;
-        },
-      body: Builder(builder: (context) {
-        return Container(color: Colors.white,);
-        /*  if (!controller.initialised) {
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.more_vert,
+            color: ThemeColors.appBarIconColor,
+          ),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.ios_share,
+            color: ThemeColors.appBarIconColor,
+          ),
+          onPressed: () {},
+        ),
+      ],
+      appBarColor: Colors.white,
+      title: Text(
+        widget.category?.title ?? '',
+        style: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30),
+      ),
+      onWillOpen: () {
+        if (slidableController.activeState != null) {
+          slidableController.activeState?.close();
+          return false;
+        } else
+          return true;
+      },
+      body: BlocBuilder<CategoriesBloc, CategoriesState>(
+          builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.only(top:8.0),
+          child: ListView.builder(
+            itemCount: state.categories?.length,
+            itemBuilder: (context, index) {
+              return Container(child: Text(state.categories?[index].title ?? ""));
+            },
+          ),
+        );
+      })
+
+      /*  if (!controller.initialised) {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text('Wait, loading'),
@@ -84,9 +95,7 @@ class _CategoryPageState extends State<CategoryPage> {
               );
             return _buildNoteList(context, controller.notes);
           }, */
-      }),
-     
-      
+
       /*   onTap: /* (controller.currentCategory?.parent ?? category!.parent) != null
             ? () {
                 if (category!.parent == null)
@@ -102,7 +111,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   );
               }
             :  */null, */
-        /* onLongPress: () {
+      /* onLongPress: () {
          /*  print(controller.currentCategory?.parent ??
               category!.parent ??
               'Not a child'); */
@@ -350,6 +359,7 @@ class _CategoryPageState extends State<CategoryPage> {
           ),
         ),
       ], */
+      ,
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -362,7 +372,10 @@ class _CategoryPageState extends State<CategoryPage> {
                 Navigator.push(
                   context,
                   SlideFromBottomPageRoute(
-                    widget: AddScripturePage(category: Category(id: category?.id,title:category?.title),),
+                    widget: AddScripturePage(
+                      category:
+                          Category(id: category?.id, title: category?.title),
+                    ),
                   ),
                 );
               },
@@ -370,7 +383,7 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
           ),
         ],
-      ), 
+      ),
     );
   }
 

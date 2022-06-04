@@ -4,6 +4,7 @@ class Verse {
   String? bookId;
   String? bibleId;
   String? chapterId;
+  String? categoryId;
   String? reference;
   String? text;
   Verse(
@@ -12,6 +13,7 @@ class Verse {
       this.bookId,
       this.bibleId,
       this.chapterId,
+      this.categoryId,
       this.reference,
       this.text});
   factory Verse.empty() {
@@ -21,6 +23,7 @@ class Verse {
         bookId: '',
         bibleId: '',
         chapterId: '',
+        categoryId: '',
         reference: '',
         text: '');
   }
@@ -31,6 +34,7 @@ class Verse {
         bookId: json['bookId'],
         bibleId: json['bibleId'],
         chapterId: json['chapterId'],
+        categoryId: json['categoryId'],
         reference: json['reference'],
         text: json['text']);
   }
@@ -41,6 +45,7 @@ class Verse {
     data['bookId'] = bookId;
     data['bibleId'] = bibleId;
     data['chapterId'] = chapterId;
+    data['categoryId'] = categoryId;
     data['reference'] = reference;
     data['text'] = text;
     return data;

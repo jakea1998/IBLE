@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:ible/blocs/categories/categories_bloc.dart';
+import 'package:ible/blocs/save_verses/save_verse_bloc.dart';
+import 'package:ible/blocs/verse/verse_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+
 import 'package:ible/theme.dart';
 import 'package:ible/ui/pages/category.page.dart';
 import 'package:ible/ui/pages/home_page.dart';
@@ -14,20 +18,29 @@ import 'models/category_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getTemporaryDirectory(),
-  );
   
-  runApp(App());
+  
+  runApp( App());
 }
 
 class App extends StatefulWidget {
+  static void setLocale(BuildContext context, Locale newLocale) async {
+      MyApp state = context.findAncestorStateOfType<MyApp>()!;
+        state.changeLanguage(newLocale);
+     }
   MyApp createState() => MyApp();
+   
 }
 
 class MyApp extends State<App> {
   // This widget is the root of your application.
+  Locale? _locale;
 
+   changeLanguage(Locale locale) {
+     setState(() {
+      _locale = locale;
+     });
+    }
   Future<Widget> getHomeScreen() async {
     try {
       final _auth = FirebaseAuth.instance;
@@ -55,18 +68,32 @@ class MyApp extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'IBLE',
-        home: FutureBuilder<Widget>(
-          future: getHomeScreen(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData)
-              return snapshot.data ?? Container();
-            else
-              return Container();
-          },
-        ));
+    return MultiBlocProvider(
+      providers:[
+        BlocProvider<SaveVerseBloc>(
+            create: (context) => SaveVerseBloc(),
+          ),
+           BlocProvider<VerseBloc>(
+            create: (context) => VerseBloc(),
+          ),
+            BlocProvider<CategoriesBloc>(
+            create: (context) => CategoriesBloc(),
+          ),
+     ],
+      child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'IBLE',
+            
+            home: FutureBuilder<Widget>(
+              future: getHomeScreen(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData)
+                  return snapshot.data ?? Container();
+                else
+                  return Container();
+              },
+            )),
+    );
   }
 }
 

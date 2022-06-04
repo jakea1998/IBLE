@@ -6,3 +6,10 @@ abstract class AppLanguageEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+class AppLanguageEventLoadLanguage extends AppLanguageEvent{
+  
+  AppLanguageEventLoadLanguage();
+
+  @override
+  List<Object> get props => [];
+}

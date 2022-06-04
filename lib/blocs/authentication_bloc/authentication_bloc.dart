@@ -11,54 +11,49 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
+       //TODO temporary
+  final testUser = AppUser.empty();
+
+  final AuthenticationRepository _authenticationRepository;
   AuthenticationBloc({
     required AuthenticationRepository authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
         super(
           AuthenticationState.unknown(AppUser.empty()),
-        );
-
-  //TODO temporary
-  final testUser = AppUser.empty();
-
-  final AuthenticationRepository _authenticationRepository;
-
-  @override
-  Stream<AuthenticationState> mapEventToState(
-    AuthenticationEvent event,
-  ) async* {
-    if (event is AuthenticationUserChanged) {
-      yield _mapAuthenticationUserChangedToState(event);
-    } else if (event is AuthenticationLogoutRequested) {
+        ) {
+    on<AuthenticationUserChanged>((event, emit) {
+      if (event.user.id == testUser.id) {
+        print('unauthenticated');
+        return AuthenticationState.unauthenticated(testUser);
+      } else if (event.user.email != testUser.email) {
+        print('authenticated');
+        return AuthenticationState.authenticated(event.user);
+      } else {
+        print('unknown');
+        return AuthenticationState.unknown(testUser);
+      }
+    });
+    on<AuthenticationLogoutRequested>((event, emit) async {
       await _authenticationRepository.signOut();
-    } else if (event is AuthenticationDeleteRequested) {
+    });
+    on<AuthenticationDeleteRequested>((event, emit) async {
       await _authenticationRepository.deleteUserFromFirebaseAuth(
           user: state.user);
       await _authenticationRepository.deleteUserFromFirestore(user: state.user);
-    } else if (event is AuthenticationPasswordResetRequested) {
-      //TODO: implement this section
-      await _authenticationRepository.sendPasswordResetEmail(state.user.email ?? '');
-    }
+    });
+    on<AuthenticationPasswordResetRequested>((event, emit) async{
+      await _authenticationRepository
+          .sendPasswordResetEmail(state.user.email ?? '');
+    });
   }
+
+ 
+
+  
 
   @override
   Future<void> close() {
     // _authenticationRepository.dispose();
     return super.close();
-  }
-
-  AuthenticationState _mapAuthenticationUserChangedToState(
-    AuthenticationUserChanged event,
-  ) {
-    if (event.user.id == testUser.id) {
-      print('unauthenticated');
-      return AuthenticationState.unauthenticated(testUser);
-    } else if (event.user.email != testUser.email) {
-      print('authenticated');
-      return AuthenticationState.authenticated(event.user);
-    } else {
-      print('unknown');
-      return AuthenticationState.unknown(testUser);
-    }
   }
 }

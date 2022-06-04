@@ -12,37 +12,23 @@ part 'bible_version_state.dart';
 
 class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
   final _bibleRepo = VersionRepo();
-  BibleVersionBloc() : super(BibleVersionState.initial());
-
-  @override
-  Stream<BibleVersionState> mapEventToState(
-    BibleVersionEvent event,
-  ) async* {
-    // TODO: implement mapEventToState
-    if (event is BibleVersionEventFetchAllBibleVersions) {
-      yield* _mapFetchAllVersionsToState(event);
-    }
-  }
-
-  Stream<BibleVersionState> _mapFetchAllVersionsToState(
-      BibleVersionEventFetchAllBibleVersions event) async* {
-    yield state.copyWith(status: BibleVersionStatus.loading);
-    try {
-      final model = await _bibleRepo.getBibleVersionModelList();
-      final model2 = _bibleRepo.getOnlyVersionsByLanguage(
-          bibleVersionModel: model, language: "English");
-      yield state.copyWith(status: BibleVersionStatus.loaded, model: model2);
-    } on Exception {
-      yield state.copyWith(
-          status: BibleVersionStatus.error,
-          failure:
-              Failure(message: "Sorry, we couldn't load the bible versions."));
-    }
-  }
-
-  Stream<BibleVersionState> _mapSaveVersionToState(
-      BibleVersionEventSaveBibleVersion event) async* {
-    yield state.copyWith(status: BibleVersionStatus.loading);
+  BibleVersionBloc() : super(BibleVersionState.initial()) {
+    on<BibleVersionEventFetchAllBibleVersions>((event, emit) async {
+      emit(state.copyWith(status: BibleVersionStatus.loading));
+      try {
+        final model = await _bibleRepo.getBibleVersionModelList();
+        final model2 = _bibleRepo.getOnlyVersionsByLanguage(
+            bibleVersionModel: model, language: "English");
+        emit(state.copyWith(status: BibleVersionStatus.loaded, model: model2));
+      } on Exception {
+        emit(state.copyWith(
+            status: BibleVersionStatus.error,
+            failure: Failure(
+                message: "Sorry, we couldn't load the bible versions.")));
+      }
+    });
+    on<BibleVersionEventSaveBibleVersion>((event, emit) {
+    emit( state.copyWith(status: BibleVersionStatus.loading));
     try {
       //final model = await _bibleRepo.get();
 
@@ -50,10 +36,13 @@ class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
       //status: BibleVersionStatus.loaded,
       //savedVersion:  );
     } on Exception {
-      yield state.copyWith(
+      emit(state.copyWith(
           status: BibleVersionStatus.error,
           failure:
-              Failure(message: "Sorry, we couldn't save the bible version."));
+              Failure(message: "Sorry, we couldn't save the bible version.")));
     }
+    });
   }
+
+  
 }
