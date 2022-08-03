@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/blocs/save_verses/save_verse_bloc.dart';
+import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
 import 'package:ible/blocs/verse/verse_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -73,14 +75,17 @@ class MyApp extends State<App> {
         BlocProvider<SaveVerseBloc>(
             create: (context) => SaveVerseBloc(),
           ),
+          BlocProvider<ScripturesBloc>(
+            create: (context) => ScripturesBloc()..add(ScripturesEventLoadScriptures()),
+          ),
            BlocProvider<VerseBloc>(
             create: (context) => VerseBloc(),
           ),
             BlocProvider<CategoriesBloc>(
-            create: (context) => CategoriesBloc(),
+            create: (context) => CategoriesBloc()..add(CategoriesEventLoadCategories()),
           ),
      ],
-      child: MaterialApp(
+      child: fluent.FluentApp(
             debugShowCheckedModeBanner: false,
             title: 'IBLE',
             

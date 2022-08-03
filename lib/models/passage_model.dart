@@ -5,7 +5,7 @@ class Passage {
   String? bibleId;
   List<String>? chapterIds;
   String? reference;
-  String? categoryId;
+  String? categoryTitle;
   String? content;
   String? verseCount;
   String? copyright;
@@ -15,7 +15,7 @@ class Passage {
       this.bookId,
       this.bibleId,
       this.chapterIds,
-      this.categoryId,
+      this.categoryTitle,
       this.reference,
       this.content,
       this.verseCount,
@@ -27,7 +27,7 @@ class Passage {
         bookId: '',
         bibleId: '',
         chapterIds: [],
-        categoryId: '',
+        categoryTitle: '',
         reference: '',
         content: '',
         verseCount: '',
@@ -42,7 +42,7 @@ class Passage {
         bibleId: json['bibleId'],
         bookId: json['bookId'],
         chapterIds: chapterIdsList,
-        categoryId: json['categoryId'],
+        categoryTitle: json['categoryTitle'],
         reference: json['reference'].toString(),
         content: json['content'].toString(),
         verseCount: json['verseCount'].toString(),
@@ -57,7 +57,7 @@ class Passage {
     data['chapterIds'] = chapterIds;
     data['reference'] = reference;
     data['content'] = content;
-    data['categoryId'] = categoryId;
+    data['categoryTitle'] = categoryTitle;
     data['verseCount'] = verseCount;
     data['copyright'] = copyright;
     return data;

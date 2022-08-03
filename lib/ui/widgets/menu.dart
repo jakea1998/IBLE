@@ -1,10 +1,15 @@
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ible/blocs/categories/categories_bloc.dart';
+import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/ui/pages/add_scripture_page.dart';
 import 'package:ible/ui/pages/category.page.dart';
 import 'package:ible/ui/pages/settings_page.dart';
 import 'package:ible/ui/pages/sign_in.dart';
+import 'package:ible/ui/widgets/custom_tree_view.dart';
 import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
 import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
 
@@ -29,108 +34,203 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         child: Column(
           children: [
             buildDrawerHeader(context),
-            Expanded(child: ListView(children: [
+
+            Expanded(
+              child: BlocBuilder<CategoriesBloc, CategoriesState>(
+                builder: (context, state) {
+                  return CustomTreeView(
+                      items: [
+                        CustomTreeViewItem(
+                            onInvoked: (item) async {
+                              BlocProvider.of<ScripturesBloc>(context)
+                                .add(ScripturesEventSelectCategory(
+                              category: Category(
+                                id: 1,
+                                title: 'Memory Verse',
+                              ),
+                            ));
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => CategoryPage(
+                                    category: Category(
+                                      id: 1,
+                                      title: 'Memory Verse',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            leading: Image.asset(
+                              'assets/images/icons/memory_verses.png',
+                              width: 35,
+                            ),
+                            backgroundColor:
+                                fluent.ButtonState.resolveWith((states) {
+                              if (states.isPressing) {
+                                return ThemeColors.grey4A5151;
+                              }
+
+                              return Colors.transparent;
+                            }),
+                            content: Text(
+                              "Memory Verse",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(
+                                      color: ThemeColors.greyBCBCCO,
+                                      fontWeight: FontWeight.normal),
+                              overflow: TextOverflow.ellipsis,
+                            )),
+                        CustomTreeViewItem(
+                          onInvoked: (item) async {
+                            BlocProvider.of<ScripturesBloc>(context)
+                                .add(ScripturesEventSelectCategory(
+                              category: Category(
+                                id: 2,
+                                title: 'Favorite',
+                              ),
+                            ));
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => CategoryPage(
+                                  category: Category(
+                                    id: 2,
+                                    title: 'Favorite',
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          backgroundColor:
+                              fluent.ButtonState.resolveWith((states) {
+                            if (states.isPressing) {
+                              return ThemeColors.grey4A5151;
+                            }
+                            return Colors.transparent;
+                          }),
+                          leading: Image.asset(
+                            'assets/images/icons/favorites.png',
+                            width: 35,
+                          ),
+                          content: Text(
+                            "Favorite",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6!
+                                .copyWith(
+                                    color: ThemeColors.greyBCBCCO,
+                                    fontWeight: FontWeight.normal),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ]..addAll(state.categories?.map<CustomTreeViewItem>((e) {
+                            return CustomTreeViewItem(
+                                leading: Container(
+                                  height: 30,
+                                  width: 24,
+                                ),
+                                backgroundColor:
+                                    fluent.ButtonState.resolveWith((states) {
+                                  if (states.isPressing) {
+                                    return ThemeColors.grey4A5151;
+                                  }
+                                  return Colors.transparent;
+                                }),
+                                onInvoked: (item)async{
+                                  BlocProvider.of<ScripturesBloc>(context)
+                                .add(ScripturesEventSelectCategory(
+                              category:e
+                            ));
+                            Navigator.push( context,
+                              MaterialPageRoute(
+                                builder: (context) => CategoryPage(
+                                  category: e
+                                ),
+                              ),
+                            );
+                                },
+                                content: Text(
+                                  e.title ?? "",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(
+                                          color: ThemeColors.greyBCBCCO,
+                                          fontWeight: FontWeight.normal),
+                                  overflow: TextOverflow.ellipsis,
+                                ));
+                          }).toList() ??
+                          []),
+                      onItemInvoked: (item) async {
+                        print(item.isExpandable);
+                      },
+                      selectionMode: TreeViewSelectionMode.single);
+                },
+              )
+              /* ListView(children: [
               
-                  DrawerListItem(
-                    selected: false,
-                    title: 'Memory Verse',
-                    onTap: () {
-                     /*   Provider.of<IbDrawerController>(context, listen: false)
-                          .select(1); */
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CategoryPage(
-                            category: Category(
-                              id: 1,
-                              title: 'Memory Verse',
-                            ),
-                          ),
-                        ),
-                      ); 
-                    },
-                    iconWidget: Image.asset(
-                      'assets/images/icons/memory_verses.png',
-                      width: 24,
-                    ),
-                  ),
-                  DrawerListItem(
-                    selected: false,
-                    title: 'Favorite',
-                    onTap: () {
-                      /*  Provider.of<IbDrawerController>(context, listen: false)
-                          .select(2); */
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => CategoryPage(
-                            category: Category(
-                              id: 2,
-                              title: 'Favorite',
-                            ),
-                          ),
-                        ),
-                      ); 
-                    },
-                    iconWidget: Image.asset(
-                      'assets/images/icons/favorites.png',
-                      width: 24,
-                    ),
-                  ),
-            ],),),
+                  
+            ],) */
+              ,
+            ),
 
             Padding(
-                  padding: const EdgeInsets.only(bottom: 42.0),
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        SlideFromBottomPageRoute(
-                          widget: AddScripturePage(),
+              padding: const EdgeInsets.only(bottom: 42.0),
+              child: OutlinedButton(
+                onPressed: () {
+                  // Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    SlideFromBottomPageRoute(
+                      widget: AddScripturePage(),
+                    ),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(13.0),
+                  ),
+                  side: BorderSide(width: 2, color: Color(0xFFCACADA)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 13),
+                  child: Text(
+                    'Add Verse',
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: Colors.white,
+                          letterSpacing: 0,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ); 
-                    },
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(13.0),
-                      ),
-                      side: BorderSide(width: 2, color: Color(0xFFCACADA)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0, vertical: 13),
-                      child: Text(
-                        'Add Verse',
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: Colors.white,
-                              letterSpacing: 0,
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
                   ),
                 ),
-                  // DrawerListItem(
-                  //   selected: drawerController.selectedId == -3,
-                  //   title: 'Settings',
-                  //   onTap: () {
-                  //     Provider.of<IbDrawerController>(context,
-                  //         listen: false)
-                  //         .select(-3);
-                  //     Navigator.push(
-                  //       context,
-                  //       SlideFromRightPageRoute(widget: SettingsPage()),
-                  //     );
-                  //   },
-                  //   iconWidget: ImageIcon(
-                  //     AssetImage('assets/images/icons/settings.png'),
-                  //     color: ThemeColors.grey808082,
-                  //   ),
-                  // ),
-          ],),
+              ),
+            ),
+            // DrawerListItem(
+            //   selected: drawerController.selectedId == -3,
+            //   title: 'Settings',
+            //   onTap: () {
+            //     Provider.of<IbDrawerController>(context,
+            //         listen: false)
+            //         .select(-3);
+            //     Navigator.push(
+            //       context,
+            //       SlideFromRightPageRoute(widget: SettingsPage()),
+            //     );
+            //   },
+            //   iconWidget: ImageIcon(
+            //     AssetImage('assets/images/icons/settings.png'),
+            //     color: ThemeColors.grey808082,
+            //   ),
+            // ),
+          ],
+        ),
       ),
     );
   }
+
   Container buildDrawerHeader(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 16, bottom: 16),
@@ -250,7 +350,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.push(context,
-                          SlideFromRightPageRoute(widget:SettingsPage() ));
+                          SlideFromRightPageRoute(widget: SettingsPage()));
                       // openFromDhaza(context, category);
                     },
                     child: Row(
@@ -282,7 +382,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.push(context,
-                          SlideFromRightPageRoute(widget:  LoginPage()));
+                          SlideFromRightPageRoute(widget: LoginPage()));
                       // openFromDhaza(context, category);
                     },
                     child: Row(

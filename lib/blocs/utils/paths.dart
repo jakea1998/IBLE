@@ -9,5 +9,5 @@ class Paths {
   // sub-collections
   static const notes_subcollection = "Personal Notes";
   static const verses_subcollection = "Personal Verses";
-  static const categories_subcollection = "Personal Categories";
+  static const categories_subcollection = "PersonalCategories";
 }

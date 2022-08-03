@@ -41,16 +41,20 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
     on<VerseEventUpdateCategory>((event, emit) {
       emit(state.copyWith(
           verseStatus: VerseStatus.loading, verses: state.verses));
+      print(event.category);
       emit(state.copyWith(
         selectedCat: event.category,
         verseStatus: VerseStatus.loaded,
       ));
     });
     on<VerseEventSaveScripture>((event, emit) async {
-       emit(state.copyWith(
-          verseStatus: VerseStatus.loading,));
+      emit(state.copyWith(
+        verseStatus: VerseStatus.loading,
+      ));
       try {
+        print(state.selectedCat);
         if (state.selectedCat != null) {
+          print('selected');
           await _repo.saveVerses(
               category: state.selectedCat!,
               verses: event.verses,

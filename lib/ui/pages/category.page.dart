@@ -5,14 +5,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
+import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
 
 import 'package:ible/models/category_model.dart';
+import 'package:ible/models/passage_model.dart';
 import 'package:ible/models/scripture_model.dart';
 
 import 'package:ible/theme.dart';
 import 'package:ible/ui/pages/add_scripture_page.dart';
 import 'package:ible/ui/widgets/dcupertino_overflow_menu.widget.dart';
 import 'package:ible/ui/widgets/dnotification_dialog.widget.dart';
+import 'package:ible/ui/widgets/scripture_result_list_item.dart';
 import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
 import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
 import 'package:ible/ui/widgets/sliding_scaffold.widget.dart';
@@ -65,18 +68,51 @@ class _CategoryPageState extends State<CategoryPage> {
         } else
           return true;
       },
-      body: BlocBuilder<CategoriesBloc, CategoriesState>(
+      body: BlocBuilder<ScripturesBloc, ScripturesState>(
+        builder: (context, state) {
+          return Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            child: ListView.separated(
+              itemCount: state.displayedScriptures?.length ?? 0,
+              separatorBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.only(left: 16, top: 4, bottom: 4),
+                  height: 0.5,
+                  color: ThemeColors.greyB2B2B2,
+                );
+              },
+              itemBuilder: (context, index) {
+                return Container(
+                  color: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 16.0,
+                  ),
+                  child: ScriptureResultListItem(
+                    scripture:
+                        state.displayedScriptures?[index] ?? Passage.empty(),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ) /* BlocBuilder<CategoriesBloc, CategoriesState>(
           builder: (context, state) {
+        print(state.categories?.length);
         return Padding(
-          padding: const EdgeInsets.only(top:8.0),
+          padding: const EdgeInsets.only(top: 8.0),
           child: ListView.builder(
             itemCount: state.categories?.length,
             itemBuilder: (context, index) {
-              return Container(child: Text(state.categories?[index].title ?? ""));
+              return Container(
+                  child: Text(state.categories?[index].title ?? ""));
             },
           ),
         );
-      })
+      }) */
 
       /*  if (!controller.initialised) {
               return Padding(

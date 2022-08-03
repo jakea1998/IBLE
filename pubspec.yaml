@@ -42,6 +42,7 @@ dependencies:
   flutter_html: ^2.1.1
   easy_localization: ^3.0.0
   easy_localization_loader: any
+  fluent_ui: ^3.11.1
   
   # Dev version install from git REPO
   

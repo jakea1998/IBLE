@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ible/blocs/repos/base_verse_repo.dart';
 import 'package:ible/blocs/repos/version_repo.dart';
 import 'package:ible/blocs/utils/constants.dart';
+import 'package:ible/blocs/utils/paths.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/passage_model.dart';
 import 'package:ible/models/verse_model.dart';
@@ -14,9 +15,9 @@ class VerseRepo extends BaseVerseRepo {
   @override
   Stream<List<Passage>> getVerses({required String userId}) {
     return _fs
-        .collection("Verses")
+        .collection(Paths.verses_collection)
         .doc(userId)
-        .collection("PersonalVerses")
+        .collection(Paths.verses_subcollection)
         .snapshots()
         .map((event) =>
             event.docs.map((e) => Passage.fromJson(e.data())).toList());
@@ -59,20 +60,20 @@ class VerseRepo extends BaseVerseRepo {
     final batch = _fs.batch();
     if (isNew)
       await _fs
-          .collection("Categories")
+          .collection(Paths.categories_collection)
           .doc(userId)
-          .collection("PersonalCategories")
+          .collection(Paths.categories_subcollection)
           .doc(category.catId)
           .set(category.toJson());
     verses.forEach((element) async {
       Passage verse = element;
-      
+      verse.categoryTitle = category.title.toString();
       final docRef = _fs
-          .collection("Verses")
+          .collection(Paths.verses_collection)
           .doc(userId)
-          .collection("PersonalVerses")
+          .collection(Paths.verses_subcollection)
           .doc(element.id);
-      batch.set(docRef, element.toJson());
+      batch.set(docRef, verse.toJson());
     });
     batch.commit();
   }
