@@ -7,5 +7,5 @@ abstract class BaseVersionRepo {
       {required BibleVersionModel bibleVersionModel, required String language});
   Future<void> saveBibleVersion(
       {required String userId, required Data savedVersion});
-  Future<Data> fetchSavedBibleVersion({required String userId});
+  Stream<Data> fetchSavedBibleVersion({required String userId});
 }

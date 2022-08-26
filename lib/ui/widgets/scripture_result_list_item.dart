@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/passage_model.dart';
 import 'package:ible/models/verse_model.dart';
 
@@ -8,10 +9,11 @@ import 'package:ible/theme.dart';
 
 class ScriptureResultListItem extends StatelessWidget {
   final Passage scripture;
+  final Data bibleVersion;
   final Function(Passage)? changeVersion;
 
   const ScriptureResultListItem(
-      {Key? key, required this.scripture, this.changeVersion})
+      {Key? key, required this.scripture, required this.bibleVersion, this.changeVersion})
       : super(key: key);
 
   @override
@@ -33,7 +35,7 @@ class ScriptureResultListItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-            /*   Text(
+              /*   Text(
                 '$numPart',
                 style: Theme.of(context).textTheme.headline5!.copyWith(
                     fontWeight: FontWeight.w400,
@@ -60,7 +62,7 @@ class ScriptureResultListItem extends StatelessWidget {
                 child: InkWell(
                   onTap: () => changeVersion!(scripture),
                   child: Text(
-                    'Version',
+                    bibleVersion.abbreviation?.toString().toUpperCase() ?? "",
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(
                           color: ThemeColors.blue4681D2,
                           fontSize: 15,
@@ -81,5 +83,4 @@ class ScriptureResultListItem extends StatelessWidget {
       ),
     );
   }
-  
 }

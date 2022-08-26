@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:ible/blocs/repos/version_repo.dart';
 import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/failure_model.dart';
@@ -12,6 +14,8 @@ part 'bible_version_state.dart';
 
 class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
   final _bibleRepo = VersionRepo();
+  StreamSubscription<b.Data>? _stream1;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   BibleVersionBloc() : super(BibleVersionState.initial()) {
     on<BibleVersionEventFetchAllBibleVersions>((event, emit) async {
       emit(state.copyWith(status: BibleVersionStatus.loading));
@@ -27,22 +31,44 @@ class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
                 message: "Sorry, we couldn't load the bible versions.")));
       }
     });
-    on<BibleVersionEventSaveBibleVersion>((event, emit) {
-    emit( state.copyWith(status: BibleVersionStatus.loading));
-    try {
-      //final model = await _bibleRepo.get();
 
-      //yield state.copyWith(
-      //status: BibleVersionStatus.loaded,
-      //savedVersion:  );
-    } on Exception {
+    on<BibleVersionEventSaveBibleVersion>((event, emit) async {
+     // emit(state.copyWith(status: BibleVersionStatus.loading));
+      try {
+        //final model = await _bibleRepo.get();
+       await _bibleRepo.saveBibleVersion(
+            userId: _auth.currentUser?.uid ?? "",
+            savedVersion: event.data ?? Data.empty());
+        //yield state.copyWith(
+        //status: BibleVersionStatus.loaded,
+        //savedVersion:  );
+      } on Exception {
+        emit(state.copyWith(
+            status: BibleVersionStatus.error,
+            failure: Failure(
+                message: "Sorry, we couldn't save the bible version.")));
+      }
+    });
+    on<BibleVersionFetchSavedBibleVersion>((event, emit) {
+      try {
+        if (_stream1 != null) _stream1 == null;
+
+        _stream1 = _bibleRepo
+            .fetchSavedBibleVersion(userId: _auth.currentUser?.uid ?? "")
+            .listen((event) {
+          add(BibleVersionUpdateBibleVersion(data: event));
+        });
+      } on Exception catch (e) {
+        emit(state.copyWith(
+            status: BibleVersionStatus.error,
+            failure: Failure(
+                message: "Sorry, we couldn't save the bible version.")));
+      }
+    });
+    on<BibleVersionUpdateBibleVersion>((event, emit) {
+      emit(state.copyWith(status: BibleVersionStatus.loading));
       emit(state.copyWith(
-          status: BibleVersionStatus.error,
-          failure:
-              Failure(message: "Sorry, we couldn't save the bible version.")));
-    }
+          status: BibleVersionStatus.loaded, savedVersion: event.data));
     });
   }
-
-  
 }

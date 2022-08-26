@@ -35,13 +35,13 @@ class VersionRepo extends BaseVersionRepo {
   }
 
   @override
-  Future<Data> fetchSavedBibleVersion({required String userId}) async {
+  Stream<Data> fetchSavedBibleVersion({required String userId})  {
     // TODO: implement fetchSavedBibleVersion
-    final doc = await _firebaseFirestore
+    return _firebaseFirestore
         .collection(Paths.version_collection)
         .doc(userId)
-        .get();
-    return Data.fromJson(doc.data() ?? {});
+        .snapshots().map((event) => Data.fromJson(event.data() ?? {}));
+    
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:ible/blocs/bible_version/bible_version_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/blocs/save_verses/save_verse_bloc.dart';
 import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
@@ -20,47 +21,65 @@ import 'models/category_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  
-  
-  runApp( App());
+
+  runApp(App());
 }
 
 class App extends StatefulWidget {
   static void setLocale(BuildContext context, Locale newLocale) async {
-      MyApp state = context.findAncestorStateOfType<MyApp>()!;
-        state.changeLanguage(newLocale);
-     }
+    MyApp state = context.findAncestorStateOfType<MyApp>()!;
+    state.changeLanguage(newLocale);
+  }
+
   MyApp createState() => MyApp();
-   
 }
 
 class MyApp extends State<App> {
   // This widget is the root of your application.
   Locale? _locale;
 
-   changeLanguage(Locale locale) {
-     setState(() {
+  changeLanguage(Locale locale) {
+    setState(() {
       _locale = locale;
-     });
-    }
-  Future<Widget> getHomeScreen() async {
+    });
+  }
+
+  Future<Widget> getHomeScreen(fluent.BuildContext context) async {
     try {
       final _auth = FirebaseAuth.instance;
       final user = _auth.currentUser;
       if (user == null) {
         await _auth.signInAnonymously();
-        
+
         print('signed in anonymously');
-        return CategoryPage(category: Category(
+        /* BlocProvider.of<ScripturesBloc>(context)
+          ..add(ScripturesEventSelectCategory(
+            category: Category(
               id: 2,
               title: 'Favorites',
-            ),);
+            ),
+          )); */
+        return CategoryPage(
+          category: Category(
+            id: 2,
+            title: 'Favorites',
+          ),
+        );
       } else {
         print('signed in');
-        return CategoryPage(category: Category(
+        /* BlocProvider.of<ScripturesBloc>(context)
+          ..add(ScripturesEventSelectCategory(
+            category: Category(
               id: 2,
               title: 'Favorites',
-            ),);
+            ),
+          )); */
+        return CategoryPage(
+          category: Category(
+            id: 2,
+            title: 'Favorites',
+          ),
+        );
       }
     } catch (e) {
       print(e);
@@ -71,33 +90,38 @@ class MyApp extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers:[
+      providers: [
         BlocProvider<SaveVerseBloc>(
-            create: (context) => SaveVerseBloc(),
-          ),
-          BlocProvider<ScripturesBloc>(
-            create: (context) => ScripturesBloc()..add(ScripturesEventLoadScriptures()),
-          ),
-           BlocProvider<VerseBloc>(
-            create: (context) => VerseBloc(),
-          ),
-            BlocProvider<CategoriesBloc>(
-            create: (context) => CategoriesBloc()..add(CategoriesEventLoadCategories()),
-          ),
-     ],
+          create: (context) => SaveVerseBloc(),
+        ),
+        BlocProvider<ScripturesBloc>(
+          create: (context) =>
+              ScripturesBloc()..add(ScripturesEventLoadScriptures()),
+        ),
+        BlocProvider<VerseBloc>(
+          create: (context) => VerseBloc(),
+        ),
+        BlocProvider<BibleVersionBloc>(
+            create: (context) => BibleVersionBloc()
+              ..add(BibleVersionFetchSavedBibleVersion())
+              ..add(BibleVersionEventFetchAllBibleVersions())),
+        BlocProvider<CategoriesBloc>(
+          create: (context) =>
+              CategoriesBloc()..add(CategoriesEventLoadCategories()),
+        ),
+      ],
       child: fluent.FluentApp(
-            debugShowCheckedModeBanner: false,
-            title: 'IBLE',
-            
-            home: FutureBuilder<Widget>(
-              future: getHomeScreen(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData)
-                  return snapshot.data ?? Container();
-                else
-                  return Container();
-              },
-            )),
+          debugShowCheckedModeBanner: false,
+          title: 'IBLE',
+          home: FutureBuilder<Widget>(
+            future: getHomeScreen(context),
+            builder: (context, snapshot) {
+              if (snapshot.hasData)
+                return snapshot.data ?? Container();
+              else
+                return Container();
+            },
+          )),
     );
   }
 }
@@ -124,7 +148,7 @@ class _IbleSplashPageState extends State<IbleSplashPage>
         .animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _animationController.addListener(() {
-      setState(() {});
+      //setState(() {});
     });
     _animationController.forward();
     Timer(

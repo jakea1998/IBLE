@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:ible/blocs/bible_version/bible_version_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
+import 'package:ible/models/bible_version.dart';
 
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/passage_model.dart';
@@ -39,22 +41,7 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return SlidingScaffold(
-      actions: [
-        IconButton(
-          icon: Icon(
-            Icons.more_vert,
-            color: ThemeColors.appBarIconColor,
-          ),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.ios_share,
-            color: ThemeColors.appBarIconColor,
-          ),
-          onPressed: () {},
-        ),
-      ],
+      
       appBarColor: Colors.white,
       title: Text(
         widget.category?.title ?? '',
@@ -68,8 +55,190 @@ class _CategoryPageState extends State<CategoryPage> {
         } else
           return true;
       },
+      actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 0.0),
+            child: DCupertinoOverflowMenu(
+              children: [
+                if (this.widget.category!.id != 1 &&
+                    this.widget.category!.id != 2)
+                  CupertinoActionSheetAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      openFromDhaza(context, category);
+                    },
+                    child: Text('Edit Name'),
+                  ),
+                if (this.widget.category!.id != 1 &&
+                    this.widget.category!.id != 2)
+                  CupertinoActionSheetAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (BuildContext context) => CupertinoActionSheet(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Category',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                      color: ThemeColors.grey9B9B9B,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              Image.asset(
+                                'assets/images/icons/move_to.png',
+                                height: 24,
+                                color: ThemeColors.grey9B9B9B,
+                              ),
+                              Text(
+                                'Note',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                      color: ThemeColors.grey9B9B9B,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          message: Text(
+                            'Transfer category scriptures to note?',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      color: ThemeColors.grey9B9B9B,
+                                    ),
+                          ),
+                          actions: [
+                            CupertinoActionSheetAction(
+                              child: Text(
+                                'Yes',
+                                style: TextStyle(color: ThemeColors.blue027CFE),
+                              ),
+                              onPressed: () {
+                               /*  Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  SlideFromRightPageRoute(
+                                    widget: CategoryNotePage(
+                                        category: category,
+                                        scriptures: controller.notes),
+                                  ),
+                                ).then((value) {
+                                  if (value) _copyScripturesFromNote();
+                                }); */
+                              },
+                            ),
+                            CupertinoActionSheetAction(
+                              child: Text(
+                                'No',
+                                style: TextStyle(color: ThemeColors.blue027CFE),
+                              ),
+                              onPressed: () {
+                               /*  /* Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  SlideFromRightPageRoute(
+                                    widget: CategoryNotePage(
+                                      category: category,
+                                      scriptures: [],
+                                    ),
+                                  ), */
+                                ).then((value) {
+                                  if (value) _copyScripturesFromNote();
+                                }); */
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                    child: Text('Add Note'),
+                  ),
+                if (this.widget.category!.id != 1 &&
+                    this.widget.category!.id != 2 &&
+                    this.widget.category?.parent == null)
+                  CupertinoActionSheetAction(
+                      onPressed: () {
+                      /*   Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          SlideFromRightPageRoute(
+                              widget: AddScriptureToSubCategoryPage(
+                            parent: this.widget.category!,
+                          )),
+                        ); */
+                      },
+                      child: Text('Add Sub category')),
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                   /*  Navigator.pop(context);
+                    final scriptures = Provider.of<CategoryController>(
+                      context,
+                      listen: false,
+                    ).notes!;
+                    var list = '';
+                    scriptures.forEach((scripture) {
+                      list += '\n\n${scripture.print}';
+                    });
+                    Clipboard.setData(ClipboardData(text: list.trim())); */
+                  },
+                  child: Text('Copy Scripture List'),
+                ),
+                if (this.widget.category!.id != 1 &&
+                    this.widget.category!.id != 2)
+                  CupertinoActionSheetAction(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      final del = await deleteCategoryDialog(context, category);
+
+                      Navigator.pushReplacement(
+                          context,
+                          SlideFromRightPageRoute(
+                              widget: CategoryPage(
+                            category: Category(id: 2, title: 'Favs'),
+                          )));
+                    },
+                    child: Text('Delete Category'),
+                    isDestructiveAction: true,
+                  ),
+              ],
+              borderRadius: BorderRadius.circular(13),
+              iconColor: Colors.white,
+              onChange: (index) {
+                print(index);
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (context) => SharePage(
+                //       category: category,
+                //     ),
+                //   ),
+                // );
+              },
+              child: ImageIcon(
+                AssetImage('assets/images/icons/share.png'),
+                size: 26.0,
+                color: ThemeColors.appBarIconColor,
+              ),
+            ),
+          ),
+        ],
       body: BlocBuilder<ScripturesBloc, ScripturesState>(
         builder: (context, state) {
+          print('scripture');
           return Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -84,6 +253,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 );
               },
               itemBuilder: (context, index) {
+                print('index:$index');
                 return Container(
                   color: Colors.transparent,
                   padding: const EdgeInsets.symmetric(
@@ -91,6 +261,10 @@ class _CategoryPageState extends State<CategoryPage> {
                     horizontal: 16.0,
                   ),
                   child: ScriptureResultListItem(
+                    bibleVersion: BlocProvider.of<BibleVersionBloc>(context)
+                            .state
+                            .savedVersion ??
+                        Data.empty(),
                     scripture:
                         state.displayedScriptures?[index] ?? Passage.empty(),
                   ),

@@ -22,3 +22,10 @@ class BibleVersionFetchSavedBibleVersion extends BibleVersionEvent{
   List<Object?> get props => [];
 
 }
+class BibleVersionUpdateBibleVersion extends BibleVersionEvent {
+  final b.Data? data;
+  BibleVersionUpdateBibleVersion({this.data});
+  @override
+  // TODO: implement props
+  List<Object?> get props => [data];
+}
