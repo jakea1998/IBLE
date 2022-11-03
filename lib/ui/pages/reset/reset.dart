@@ -205,7 +205,7 @@ class _ResetPageState extends State<ResetPage> {
                 labelText: 'Enter Username',
                 controller: _usernameController,
                 validator: (value) =>
-                value.isEmpty ? 'Enter the username' : null,
+                (value?.isNotEmpty ?? false) ? 'Enter the username' : null,
               ),
             ),
           ),
@@ -236,7 +236,7 @@ class _ResetPageState extends State<ResetPage> {
             child: ScriptureInputFormField(
               labelText: 'Enter Token',
               validator: (value) =>
-              value.isNotEmpty ? null : 'Please enter the token',
+              (value?.isNotEmpty ?? false) ? null : 'Please enter the token',
               controller: _tokenController,
               keyboardType: TextInputType.number,
             ),
@@ -249,7 +249,7 @@ class _ResetPageState extends State<ResetPage> {
                 bottom: 8.0, top: 16.0, left: 16.0, right: 16.0),
             child: ScriptureInputFormField(
               labelText: 'Enter Username',
-              validator: (value) => value.isNotEmpty && value.trim().length >= 4
+              validator: (value) => (value?.isNotEmpty ?? false) && (value?.trim().length ?? 0) >= 4
                   ? null
                   : 'Username must be at least 4 characters',
               controller: _usernameController,
@@ -265,7 +265,7 @@ class _ResetPageState extends State<ResetPage> {
               labelText: 'Enter Password',
               controller: _passwordController,
               obscureText: true,
-              validator: (value) => value.isNotEmpty && value.trim().length >= 6
+              validator: (value) => (value?.isNotEmpty ?? false) && (value?.trim().length ?? 0) >= 6
                   ? null
                   : 'Password must be at least 6 characters',
             ),

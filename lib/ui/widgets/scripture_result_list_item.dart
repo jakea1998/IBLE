@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+
+//import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/passage_model.dart';
 import 'package:ible/models/verse_model.dart';
@@ -73,7 +74,7 @@ class ScriptureResultListItem extends StatelessWidget {
               ),
             ],
           ),
-          Html(data: scripture.content)
+         // HtmlWidget( scripture.content ??"")
           /* Text(
             '${scripture}',
             textAlign: TextAlign.start,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:ible/blocs/repos/base_verse_repo.dart';
 import 'package:ible/blocs/repos/version_repo.dart';
 import 'package:ible/blocs/utils/constants.dart';
@@ -12,7 +13,8 @@ import 'dart:convert';
 
 class VerseRepo extends BaseVerseRepo {
   FirebaseFirestore _fs = FirebaseFirestore.instance;
-  @override
+  FirebaseDatabase _firebaseDb = FirebaseDatabase.instance;
+  /*  @override
   Stream<List<Passage>> getVerses({required String userId}) {
     return _fs
         .collection(Paths.verses_collection)
@@ -21,7 +23,7 @@ class VerseRepo extends BaseVerseRepo {
         .snapshots()
         .map((event) =>
             event.docs.map((e) => Passage.fromJson(e.data())).toList());
-  }
+  } */
 
   @override
   Future<List<Passage>> searchVerses({required String query}) async {
@@ -57,25 +59,46 @@ class VerseRepo extends BaseVerseRepo {
       required List<Passage> verses,
       required String userId}) async {
     // TODO: implement saveVerses
-    final batch = _fs.batch();
-    if (isNew)
-      await _fs
-          .collection(Paths.categories_collection)
-          .doc(userId)
-          .collection(Paths.categories_subcollection)
-          .doc(category.catId)
+    //final batch = _fs.batch();
+    /*  if (isNew)
+      await _firebaseDb.ref()
+          .child(Paths.categories_collection)
+          .child(userId)
+          .child(Paths.categories_subcollection)
+          .child(category.id ?? "")
+          .set(category.toJson()); */
+    for (int i = 0; i < verses.length; i++) {
+      verses[i].categoryId = category.id;
+    }
+    print('save');
+    category.verses = [];
+
+    category.verses?.addAll(verses);
+    print(category.verses?[0]);
+    if (category.parent == "null" || category.parent == null) {
+      print('save2');
+      print(category.id);
+      print(category.toJson());
+      await _firebaseDb
+          .ref()
+          .child(Paths.categories_collection)
+          .child(userId)
+          .child(Paths.categories_subcollection)
+          .child(category.id.toString())
           .set(category.toJson());
-    verses.forEach((element) async {
-      Passage verse = element;
-      verse.categoryTitle = category.title.toString();
-      final docRef = _fs
-          .collection(Paths.verses_collection)
-          .doc(userId)
-          .collection(Paths.verses_subcollection)
-          .doc(element.id);
-      batch.set(docRef, verse.toJson());
-    });
-    batch.commit();
+    } else {
+      await _firebaseDb
+          .ref()
+          .child(Paths.categories_collection)
+          .child(userId)
+          .child(Paths.categories_subcollection)
+          .child(category.parent ?? "")
+          .child(Paths.sub_categories_collection)
+          .child(category.id ?? "")
+          .set(category.toJson());
+    }
+
+    // batch.commit();
   }
 }
 

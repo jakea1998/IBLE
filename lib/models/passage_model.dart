@@ -1,11 +1,13 @@
+
+
 class Passage {
   String? id;
   String? orgId;
   String? bookId;
   String? bibleId;
-  List<String>? chapterIds;
+  //List<String>? chapterIds;
   String? reference;
-  String? categoryTitle;
+  String? categoryId;
   String? content;
   String? verseCount;
   String? copyright;
@@ -14,8 +16,8 @@ class Passage {
       this.orgId,
       this.bookId,
       this.bibleId,
-      this.chapterIds,
-      this.categoryTitle,
+     // this.chapterIds,
+      this.categoryId,
       this.reference,
       this.content,
       this.verseCount,
@@ -26,40 +28,41 @@ class Passage {
         orgId: '',
         bookId: '',
         bibleId: '',
-        chapterIds: [],
-        categoryTitle: '',
+       // chapterIds: [],
+        categoryId: '',
         reference: '',
         content: '',
         verseCount: '',
         copyright: '');
   }
-  factory Passage.fromJson(Map<String, dynamic> json) {
+  factory Passage.fromJson(Map<dynamic, dynamic> json) {
     List<String>? chapterIdsList = [];
-    json['chapterIds'].forEach((e) => chapterIdsList.add(e));
+    //json['chapterIds'].forEach((e) => chapterIdsList.add(e));
     return Passage(
         id: json['id'],
         orgId: json['orgId'],
         bibleId: json['bibleId'],
         bookId: json['bookId'],
-        chapterIds: chapterIdsList,
-        categoryTitle: json['categoryTitle'],
+       // chapterIds: chapterIdsList,
+        categoryId: json['categoryId'],
         reference: json['reference'].toString(),
         content: json['content'].toString(),
         verseCount: json['verseCount'].toString(),
         copyright: json['copyright'].toString());
   }
-  Map<String, dynamic> toJson() {
-    final data = Map<String, dynamic>();
+  Map<dynamic, dynamic> toJson() {
+    final data = Map<dynamic, dynamic>();
+    
     data['id'] = id;
     data['orgId'] = orgId;
     data['bookId'] = bookId;
     data['bibleId'] = bibleId;
-    data['chapterIds'] = chapterIds;
+   // data['chapterIds'] = chapterIds;
     data['reference'] = reference;
-    data['content'] = content;
-    data['categoryTitle'] = categoryTitle;
+    data['content'] = content.toString();
+    data['categoryId'] = categoryId;
     data['verseCount'] = verseCount;
-    data['copyright'] = copyright;
+    data['copyright'] = copyright.toString();
     return data;
   }
 }

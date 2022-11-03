@@ -1,6 +1,6 @@
 //import 'package:faqs_webapp/models/FaqDataModel.dart';
 
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
+//import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ible/theme.dart';
@@ -9,12 +9,12 @@ const double _whiteSpace = 28.0;
 
 /// Default loading indicator used by [CustomTreeView]
 const Widget kTreeViewLoadingIndicator = SizedBox(
-  height: 12.0,
-  width: 12.0,
-  child: fluent.ProgressRing(
+    height: 12.0,
+    width: 12.0,
+    child: /* fluent.ProgressRing(
     strokeWidth: 3.0,
-  ),
-);
+  ), */
+        CircularProgressIndicator());
 
 enum TreeViewSelectionMode {
   /// Selection is disabled
@@ -47,7 +47,6 @@ enum TreeViewSelectionMode {
 ///  * [Checkbox], used on multiple selection mode
 class CustomTreeViewItem with Diagnosticable {
   final Key? key;
-  
 
   /// The item leading
   ///
@@ -89,14 +88,16 @@ class CustomTreeViewItem with Diagnosticable {
   bool? selected;
 
   /// Called when this item is invoked
-  final Future<void> Function(CustomTreeViewItem item, )? onInvoked;
+  final Future<void> Function(
+    CustomTreeViewItem item,
+  )? onInvoked;
 
   /// The background color of this item.
   ///
   /// See also:
   ///
   ///   * [ButtonThemeData.uncheckedInputColor], which is used by default
-  final fluent.ButtonState<Color>? backgroundColor;
+  //final fluent.ButtonState<Color>? backgroundColor;
 
   /// Whether this item is visible or not. Used to not lose the item state while
   /// it's not on the screen
@@ -126,14 +127,13 @@ class CustomTreeViewItem with Diagnosticable {
   CustomTreeViewItem({
     this.key,
     this.leading,
-    
     required this.content,
     this.children = const [],
     this.collapsable = true,
     bool? expanded,
     this.selected = false,
     this.onInvoked,
-    this.backgroundColor,
+    //this.backgroundColor,
     this.autofocus = false,
     this.focusNode,
     this.semanticLabel,
@@ -353,22 +353,22 @@ class CustomTreeViewState extends State<CustomTreeView> {
 
   void expandTree() {
     for (int i = 0; i < (items.length ?? 0); i++) {
-      
       items[i].expanded = true;
     }
     setState(() {
       items = widget.items.build();
     });
   }
+
   void collapseTree() {
     for (int i = 0; i < (items.length ?? 0); i++) {
-      
       items[i].expanded = false;
     }
     setState(() {
       items = widget.items.build();
     });
   }
+
   @override
   void dispose() {
     items.clear();
@@ -378,7 +378,7 @@ class CustomTreeViewState extends State<CustomTreeView> {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    assert(fluent.debugCheckHasFluentTheme(context));
+    //assert(fluent.debugCheckHasFluentTheme(context));
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 28.0),
       child: Column(
@@ -449,7 +449,10 @@ class CustomTreeViewState extends State<CustomTreeView> {
   Future<void> invokeItem(CustomTreeViewItem item) async {
     await Future.wait([
       if (widget.onItemInvoked != null) widget.onItemInvoked!(item),
-      if (item.onInvoked != null) item.onInvoked!(item, ),
+      if (item.onInvoked != null)
+        item.onInvoked!(
+          item,
+        ),
     ]);
   }
 }
@@ -475,10 +478,10 @@ class _TreeViewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!item._visible) return const SizedBox.shrink();
-    final theme = fluent.FluentTheme.of(context);
+    //final theme = fluent.FluentTheme.of(context);
     final selected = item.selected ?? false;
     final direction = Directionality.of(context);
-    return fluent.HoverButton(
+    return Container(); /* fluent.HoverButton(
       onPressed: selectionMode == TreeViewSelectionMode.none
           ? onInvoked
           : selectionMode == TreeViewSelectionMode.single
@@ -597,6 +600,6 @@ class _TreeViewItem extends StatelessWidget {
           ],
         );
       },
-    );
+    ); */
   }
 }

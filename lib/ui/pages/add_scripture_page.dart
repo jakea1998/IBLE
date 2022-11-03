@@ -16,6 +16,7 @@ import 'package:ible/ui/widgets/auth_text_input_field.dart';
 import 'package:ible/ui/widgets/dnotification_dialog.widget.dart';
 import 'package:ible/ui/widgets/scripture_result_list_item.dart';
 import 'package:ible/ui/widgets/tab_indicator.dart';
+import 'package:uuid/uuid.dart';
 
 import 'category.page.dart';
 
@@ -59,9 +60,10 @@ class _AddScripturePageState extends State<AddScripturePage>
             BlocProvider.of<CategoriesBloc>(context).state.categories?.length ??
                 2;
         Category category1 = Category(
-            id: len + 1,
+            id: Uuid().v1(),
+            parent: null,
             title: _categoryTextEditingController.text,
-            catId: _categoryTextEditingController.text);
+            );
         print('update');
         BlocProvider.of<VerseBloc>(context)
           ..add(VerseEventUpdateCategory(category: category1));
@@ -84,20 +86,49 @@ class _AddScripturePageState extends State<AddScripturePage>
     showPersistentDialogFromBottom(
       context,
       child: Dialog(
-          // backgroundColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           insetPadding: EdgeInsets.only(left: 0, right: 0, bottom: 0, top: 44),
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(16)),
-                color: Theme.of(context).backgroundColor),
+                color: Colors.white),
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: Column(
                 children: [
-                  ListTile(
-                    leading: Icon(null),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 30,
+                        ),
+                        Spacer(
+                          flex: 1,
+                        ),
+                        Text(
+                          'CHOOSE CATEGORY',
+                          style:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    // color: ThemeColors.grey595959,
+                                    fontSize: 20,
+                                  ),
+                        ),
+                        Spacer(
+                          flex: 1,
+                        ),
+                        InkWell(
+                          child: ImageIcon(
+                              AssetImage('assets/images/icons/close.png')),
+                          onTap: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  )
+                  /*  ListTile(
+                    
                     title: Text(
                       'CHOOSE CATEGORY',
                       style: Theme.of(context).textTheme.bodyText1!.copyWith(
@@ -110,7 +141,8 @@ class _AddScripturePageState extends State<AddScripturePage>
                           AssetImage('assets/images/icons/close.png')),
                       onTap: () => Navigator.pop(context),
                     ),
-                  ),
+                  ), */
+                  ,
                   Padding(padding: EdgeInsets.only(top: 15)),
                   Container(
                     child: Row(
@@ -147,9 +179,10 @@ class _AddScripturePageState extends State<AddScripturePage>
                     thickness: 1,
                   ),
                   Container(
-                    color: (widget.category?.id == 1)
+                    color: /* (widget.category?.id == 1)
                         ? ThemeColors.greyECECEC
-                        : Colors.transparent,
+                        : */
+                        Colors.transparent,
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -160,7 +193,7 @@ class _AddScripturePageState extends State<AddScripturePage>
                               Navigator.of(context).pop();
                               setState(() {
                                 _selectedCategory =
-                                    Category(id: 1, title: 'Memory Verses');
+                                    Category(id: "1", title: 'Memory Verses');
                                 _categoryTextEditingController.text =
                                     'Memory Verses';
                                 // _categoryTextEditingController.value = TextEditingValue(
@@ -191,9 +224,10 @@ class _AddScripturePageState extends State<AddScripturePage>
                     thickness: 1,
                   ),
                   Container(
-                    color: (widget.category?.id == 2)
+                    color: /* (widget.category?.id == 2)
                         ? ThemeColors.greyECECEC
-                        : Colors.transparent,
+                        :  */
+                        Colors.transparent,
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -203,7 +237,7 @@ class _AddScripturePageState extends State<AddScripturePage>
                             Navigator.of(context).pop();
                             setState(() {
                               _selectedCategory =
-                                  Category(id: 2, title: 'Favorites');
+                                  Category(id: "2", title: 'Favorites');
                               _categoryTextEditingController.text = 'Favorites';
                               // _categoryTextEditingController.value = TextEditingValue(
                               //
@@ -229,7 +263,7 @@ class _AddScripturePageState extends State<AddScripturePage>
                   ),
                   Divider(
                     height: 1,
-                    thickness: 2,
+                    thickness: 1,
                   ),
                   Expanded(
                     child: Scrollbar(
@@ -248,10 +282,11 @@ class _AddScripturePageState extends State<AddScripturePage>
                             ),
                             itemBuilder: (context, index) {
                               return Container(
-                                color: (widget.category?.id ==
+                                color: /* (widget.category?.id ==
                                         categories?[index].id)
                                     ? ThemeColors.greyECECEC
-                                    : Colors.transparent,
+                                    : */
+                                    Colors.transparent,
                                 padding: EdgeInsets.symmetric(vertical: 4),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -262,10 +297,10 @@ class _AddScripturePageState extends State<AddScripturePage>
                                           Navigator.of(context).pop();
                                           setState(() {
                                             _selectedCategory =
-                                                categories?[index];
+                                                categories[index];
                                             _categoryTextEditingController
                                                     .text =
-                                                categories?[index].title ?? "";
+                                                categories[index].title ?? "";
                                             // _categoryTextEditingController.value = TextEditingValue(
                                             //
                                             // )
@@ -274,7 +309,7 @@ class _AddScripturePageState extends State<AddScripturePage>
                                         child: Container(
                                           padding: EdgeInsets.all(8),
                                           child: Text(
-                                            categories?[index].title ?? "",
+                                            categories[index].title ?? "",
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyText1!
@@ -291,7 +326,7 @@ class _AddScripturePageState extends State<AddScripturePage>
                                 ),
                               );
                             },
-                            itemCount: categories?.length ?? 0,
+                            itemCount: categories.length ?? 0,
                             shrinkWrap: true,
                           );
                         },
@@ -371,12 +406,20 @@ class _AddScripturePageState extends State<AddScripturePage>
                       padding: const EdgeInsets.only(
                           bottom: 12.0, top: 28.0, left: 16.0, right: 16.0),
                       child: InkWell(
-                        onTap: ()=>_selectedIndexValue == 0
-                           ? null
+                        onTap: () => _selectedIndexValue == 0
+                            ? null
                             : _showPickCategoryDialog(context),
                         child: ScriptureInputFormField(
                           labelText: _categoryHintText,
                           enabled: _selectedIndexValue == 0,
+                          validator: (p0) {
+                            if (p0 == "" ||
+                               p0 ==
+                                    _categoryHintText) {
+                              return "";
+                            }
+                            return null;
+                          },
                           onChanged: (newValue) {
                             if (_selectedIndexValue != 0) {
                               String title = newValue;
@@ -411,6 +454,13 @@ class _AddScripturePageState extends State<AddScripturePage>
                               },
                               child: ScriptureInputFormField(
                                 labelText: 'Type verse address',
+                                validator: (p0) {
+                            if (p0 == "" ||
+                               (BlocProvider.of<VerseBloc>(context).state.verses?.length ?? 0) == 0) {
+                              return "";
+                            }
+                            return null;
+                          },
                                 prefixIcon: Icon(
                                   Icons.search,
                                   color: Colors.grey,
@@ -523,15 +573,18 @@ class _AddScripturePageState extends State<AddScripturePage>
                         padding: const EdgeInsets.only(bottom: 16.0, top: 8),
                         child: OutlinedButton(
                           onPressed: () async {
-                            BlocProvider.of<VerseBloc>(context).add(
-                                VerseEventSaveScripture(
-                                    verses: BlocProvider.of<VerseBloc>(context)
-                                            .state
-                                            .verses ??
-                                        [],
-                                    isNew: _categoryHintText ==
-                                        "Type new category name"));
-                            Navigator.pop(context);
+                            if (_formKey.currentState?.validate() ?? false) {
+                              BlocProvider.of<VerseBloc>(context).add(
+                                  VerseEventSaveScripture(
+                                      verses:
+                                          BlocProvider.of<VerseBloc>(context)
+                                                  .state
+                                                  .verses ??
+                                              [],
+                                      isNew: _categoryHintText ==
+                                          "Type new category name"));
+                              Navigator.pop(context);
+                            }
                             //context.read<VerseBloc>()..add()
                             /*  bool hasError = false;
 

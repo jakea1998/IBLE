@@ -40,13 +40,30 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    
+    
     return SlidingScaffold(
-      
       appBarColor: Colors.white,
-      title: Text(
-        widget.category?.title ?? '',
-        style: TextStyle(
-            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (widget.category?.parent != "null" &&
+              widget.category?.parent != null)
+            Padding(
+              padding: EdgeInsets.only(right: 7, bottom: 12),
+              child: Container(
+                  height: 10,
+                  width: 10,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(5))),
+            ),
+          Text(
+            widget.category?.title ?? '',
+            style: TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30),
+          ),
+        ],
       ),
       onWillOpen: () {
         if (slidableController.activeState != null) {
@@ -56,73 +73,73 @@ class _CategoryPageState extends State<CategoryPage> {
           return true;
       },
       actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 0.0),
-            child: DCupertinoOverflowMenu(
-              children: [
-                if (this.widget.category!.id != 1 &&
-                    this.widget.category!.id != 2)
-                  CupertinoActionSheetAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      openFromDhaza(context, category);
-                    },
-                    child: Text('Edit Name'),
-                  ),
-                if (this.widget.category!.id != 1 &&
-                    this.widget.category!.id != 2)
-                  CupertinoActionSheetAction(
-                    onPressed: () {
-                      Navigator.pop(context);
+        Padding(
+          padding: EdgeInsets.only(right: 0.0),
+          child: DCupertinoOverflowMenu(
+            children: [
+              if (this.widget.category!.id != "1" &&
+                  this.widget.category!.id != "2")
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    openFromDhaza(context, category);
+                  },
+                  child: Text('Edit Name'),
+                ),
+              if (this.widget.category!.id != "1" &&
+                  this.widget.category!.id != "2")
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.pop(context);
 
-                      showCupertinoModalPopup(
-                        context: context,
-                        builder: (BuildContext context) => CupertinoActionSheet(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Category',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      color: ThemeColors.grey9B9B9B,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              Image.asset(
-                                'assets/images/icons/move_to.png',
-                                height: 24,
-                                color: ThemeColors.grey9B9B9B,
-                              ),
-                              Text(
-                                'Note',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                      color: ThemeColors.grey9B9B9B,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ],
-                          ),
-                          message: Text(
-                            'Transfer category scriptures to note?',
-                            style:
-                                Theme.of(context).textTheme.bodyText1!.copyWith(
-                                      color: ThemeColors.grey9B9B9B,
-                                    ),
-                          ),
-                          actions: [
-                            CupertinoActionSheetAction(
-                              child: Text(
-                                'Yes',
-                                style: TextStyle(color: ThemeColors.blue027CFE),
-                              ),
-                              onPressed: () {
-                               /*  Navigator.pop(context);
+                    showCupertinoModalPopup(
+                      context: context,
+                      builder: (BuildContext context) => CupertinoActionSheet(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Category',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                    color: ThemeColors.grey9B9B9B,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            Image.asset(
+                              'assets/images/icons/move_to.png',
+                              height: 24,
+                              color: ThemeColors.grey9B9B9B,
+                            ),
+                            Text(
+                              'Note',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                    color: ThemeColors.grey9B9B9B,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        message: Text(
+                          'Transfer category scriptures to note?',
+                          style:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    color: ThemeColors.grey9B9B9B,
+                                  ),
+                        ),
+                        actions: [
+                          CupertinoActionSheetAction(
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(color: ThemeColors.blue027CFE),
+                            ),
+                            onPressed: () {
+                              /*  Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   SlideFromRightPageRoute(
@@ -133,15 +150,15 @@ class _CategoryPageState extends State<CategoryPage> {
                                 ).then((value) {
                                   if (value) _copyScripturesFromNote();
                                 }); */
-                              },
+                            },
+                          ),
+                          CupertinoActionSheetAction(
+                            child: Text(
+                              'No',
+                              style: TextStyle(color: ThemeColors.blue027CFE),
                             ),
-                            CupertinoActionSheetAction(
-                              child: Text(
-                                'No',
-                                style: TextStyle(color: ThemeColors.blue027CFE),
-                              ),
-                              onPressed: () {
-                               /*  /* Navigator.pop(context);
+                            onPressed: () {
+                              /*  /* Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   SlideFromRightPageRoute(
@@ -153,19 +170,19 @@ class _CategoryPageState extends State<CategoryPage> {
                                 ).then((value) {
                                   if (value) _copyScripturesFromNote();
                                 }); */
-                              },
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                    child: Text('Add Note'),
-                  ),
-                if (this.widget.category!.id != 1 &&
-                    this.widget.category!.id != 2 &&
-                    this.widget.category?.parent == null)
-                  CupertinoActionSheetAction(
-                      onPressed: () {
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                  child: Text('Add Note'),
+                ),
+              if (this.widget.category!.id != 1 &&
+                  this.widget.category!.id != 2 &&
+                  this.widget.category?.parent == null)
+                CupertinoActionSheetAction(
+                    onPressed: () {
                       /*   Navigator.pop(context);
                         Navigator.push(
                           context,
@@ -174,11 +191,11 @@ class _CategoryPageState extends State<CategoryPage> {
                             parent: this.widget.category!,
                           )),
                         ); */
-                      },
-                      child: Text('Add Sub category')),
-                CupertinoActionSheetAction(
-                  onPressed: () {
-                   /*  Navigator.pop(context);
+                    },
+                    child: Text('Add Sub category')),
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  /*  Navigator.pop(context);
                     final scriptures = Provider.of<CategoryController>(
                       context,
                       listen: false,
@@ -188,63 +205,65 @@ class _CategoryPageState extends State<CategoryPage> {
                       list += '\n\n${scripture.print}';
                     });
                     Clipboard.setData(ClipboardData(text: list.trim())); */
-                  },
-                  child: Text('Copy Scripture List'),
-                ),
-                if (this.widget.category!.id != 1 &&
-                    this.widget.category!.id != 2)
-                  CupertinoActionSheetAction(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      final del = await deleteCategoryDialog(context, category);
-
-                      Navigator.pushReplacement(
-                          context,
-                          SlideFromRightPageRoute(
-                              widget: CategoryPage(
-                            category: Category(id: 2, title: 'Favs'),
-                          )));
-                    },
-                    child: Text('Delete Category'),
-                    isDestructiveAction: true,
-                  ),
-              ],
-              borderRadius: BorderRadius.circular(13),
-              iconColor: Colors.white,
-              onChange: (index) {
-                print(index);
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (context) => SharePage(
-                //       category: category,
-                //     ),
-                //   ),
-                // );
-              },
-              child: ImageIcon(
-                AssetImage('assets/images/icons/share.png'),
-                size: 26.0,
-                color: ThemeColors.appBarIconColor,
+                },
+                child: Text('Copy Scripture List'),
               ),
+              if (this.widget.category!.id != "1" &&
+                  this.widget.category!.id != "2")
+                CupertinoActionSheetAction(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    final del = await deleteCategoryDialog(context, category);
+
+                    Navigator.pushReplacement(
+                        context,
+                        SlideFromRightPageRoute(
+                            widget: CategoryPage(
+                          category: Category(id: "2", title: 'Favs'),
+                        )));
+                  },
+                  child: Text('Delete Category'),
+                  isDestructiveAction: true,
+                ),
+            ],
+            borderRadius: BorderRadius.circular(13),
+            iconColor: Colors.white,
+            onChange: (index) {
+              print(index);
+            },
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(right: 20.0),
+          child: GestureDetector(
+            onTap: () {
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => SharePage(
+              //       category: category,
+              //     ),
+              //   ),
+              // );
+            },
+            child: ImageIcon(
+              AssetImage('assets/images/icons/share.png'),
+              size: 26.0,
+              color: ThemeColors.appBarIconColor,
             ),
           ),
-        ],
-      body: BlocBuilder<ScripturesBloc, ScripturesState>(
+        ),
+      ],
+      body: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (context, state) {
           print('scripture');
+          print(state.selectedCategory?.title);
+          print(state.selectedCategory?.verses?.length);
           return Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             color: Colors.white,
             child: ListView.separated(
-              itemCount: state.displayedScriptures?.length ?? 0,
+              itemCount: state.selectedCategory?.verses?.length ?? 0,
               separatorBuilder: (context, index) {
                 return Container(
                   margin: EdgeInsets.only(left: 16, top: 4, bottom: 4),
@@ -266,7 +285,7 @@ class _CategoryPageState extends State<CategoryPage> {
                             .savedVersion ??
                         Data.empty(),
                     scripture:
-                        state.displayedScriptures?[index] ?? Passage.empty(),
+                        state.selectedCategory?.verses?[index] ?? Passage.empty(),
                   ),
                 );
               },
@@ -1058,6 +1077,8 @@ class _CategoryPageState extends State<CategoryPage> {
 }
 
 editCategory(BuildContext context, Category? category) async {
+  BlocProvider.of<CategoriesBloc>(context)
+      .add(CategoriesEventRenameCategory(category: category ?? Category()));
   /* final edited = await Provider.of<CategoryController>(context, listen: false)
       .update(category); */
   /*  if (edited != null) {
@@ -1122,6 +1143,9 @@ Future<bool> deleteCategoryDialog(
                   Provider.of<CategoryController>(context, listen: false); */
               /* await categoryController.delete(category!.id);
               categoryController.refresh(); */
+              BlocProvider.of<CategoriesBloc>(context).add(
+                  CategoriesEventDeleteCategory(
+                      category: category ?? Category()));
               await showNotificationDialog(context, "Category Deleted");
               Navigator.pop(context, true);
             },

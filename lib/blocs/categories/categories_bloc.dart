@@ -31,7 +31,15 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     });
     on<CategoriesEventUpdateCategories>((event, emit) {
       emit(state.copyWith(
-          status: CategoriesStatus.loaded, categories: event.categories));
+          status: CategoriesStatus.loaded, 
+          favoriteCategory: event.categories.where((element) => element.id == "2").isNotEmpty ? event.categories.where((element) => element.id == "2").toList()[0] :Category.favorite(),
+          memoryVersesCategory: event.categories.where((element) => element.id == "1").isNotEmpty ? event.categories.where((element) => element.id == "1").toList()[0] :Category.memory(),
+          categories: event.categories));
+    });
+    on<CategoriesEventSelectCategory>((event, emit) {
+      emit(state.copyWith(status: CategoriesStatus.loading));
+      emit(state.copyWith(
+          status: CategoriesStatus.loaded, selectedCategory: event.category));
     });
     on<CategoriesEventAddCategory>((event, emit) async {
       try {
@@ -42,8 +50,23 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
             categories: state.categories, status: CategoriesStatus.error));
       }
     });
-    on<CategoriesEventDeleteCategory>((event, emit) {
-      
+    on<CategoriesEventRenameCategory>((event, emit) async {
+      try {
+        await _categoryRepo.createCategory(
+            category: event.category, userId: _auth.currentUser?.uid ?? '');
+      } catch (e) {
+        emit(state.copyWith(
+            categories: state.categories, status: CategoriesStatus.error));
+      }
+    });
+    on<CategoriesEventDeleteCategory>((event, emit) async {
+      try {
+        await _categoryRepo.deleteCategory(
+            category: event.category, userId: _auth.currentUser?.uid ?? '');
+      } catch (e) {
+        emit(state.copyWith(
+            categories: state.categories, status: CategoriesStatus.error));
+      }
     });
   }
 }

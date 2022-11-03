@@ -22,6 +22,18 @@ class CategoriesEventAddCategory extends CategoriesEvent {
   @override
   List<Object> get props => [category];
 }
+class CategoriesEventSelectCategory extends CategoriesEvent {
+  final Category category;
+  CategoriesEventSelectCategory({required this.category});
+  @override
+  List<Object> get props => [category];
+}
+class CategoriesEventRenameCategory extends CategoriesEvent {
+  final Category category;
+  CategoriesEventRenameCategory({required this.category});
+  @override
+  List<Object> get props => [category];
+}
 class CategoriesEventDeleteCategory extends CategoriesEvent {
   final Category category;
   CategoriesEventDeleteCategory({required this.category});

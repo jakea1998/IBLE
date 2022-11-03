@@ -4,6 +4,7 @@ import 'package:ible/theme.dart';
 //import 'package:ible/ui/widgets/dnotification_dialog.widget.dart';
 import 'package:ible/ui/widgets/ible_drawer.widget.dart';
 import 'package:ible/ui/widgets/menu.dart';
+import 'package:provider/provider.dart';
 
 import 'ible_drawer.widget.dart';
 
@@ -98,7 +99,9 @@ class _SlidingScaffoldState extends State<SlidingScaffold>
         },
         child: Stack(
           children: <Widget>[
-            menu(context),
+           
+               menu(context),
+             
             IgnorePointer(
               child: Opacity(
                 opacity: 1 - opacity,

@@ -1,11 +1,14 @@
 import 'dart:async';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
+
+import 'package:firebase_database/firebase_database.dart';
+
 import 'package:ible/blocs/bible_version/bible_version_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
+import 'package:ible/blocs/notes/notes_bloc.dart';
 import 'package:ible/blocs/save_verses/save_verse_bloc.dart';
 import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
 import 'package:ible/blocs/verse/verse_bloc.dart';
+import 'package:ible/ui/widgets/menu.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,13 +18,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ible/theme.dart';
 import 'package:ible/ui/pages/category.page.dart';
 import 'package:ible/ui/pages/home_page.dart';
+import 'package:provider/provider.dart';
 
 import 'models/category_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp();
-
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
   runApp(App());
 }
 
@@ -44,7 +49,7 @@ class MyApp extends State<App> {
     });
   }
 
-  Future<Widget> getHomeScreen(fluent.BuildContext context) async {
+  Future<Widget> getHomeScreen(BuildContext context) async {
     try {
       final _auth = FirebaseAuth.instance;
       final user = _auth.currentUser;
@@ -52,33 +57,21 @@ class MyApp extends State<App> {
         await _auth.signInAnonymously();
 
         print('signed in anonymously');
-        /* BlocProvider.of<ScripturesBloc>(context)
-          ..add(ScripturesEventSelectCategory(
-            category: Category(
-              id: 2,
-              title: 'Favorites',
-            ),
-          )); */
+         /* BlocProvider.of<CategoriesBloc>(context)
+          ..add(CategoriesEventSelectCategory(
+            category: BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
+          ));  */
         return CategoryPage(
-          category: Category(
-            id: 2,
-            title: 'Favorites',
-          ),
+          category: BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
         );
       } else {
         print('signed in');
-        /* BlocProvider.of<ScripturesBloc>(context)
-          ..add(ScripturesEventSelectCategory(
-            category: Category(
-              id: 2,
-              title: 'Favorites',
-            ),
-          )); */
+      /*   BlocProvider.of<CategoriesBloc>(context)
+          ..add(CategoriesEventSelectCategory(
+            category:  BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
+          ));  */
         return CategoryPage(
-          category: Category(
-            id: 2,
-            title: 'Favorites',
-          ),
+          category: /* BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ??  */Category.favorite()
         );
       }
     } catch (e) {
@@ -96,32 +89,37 @@ class MyApp extends State<App> {
         ),
         BlocProvider<ScripturesBloc>(
           create: (context) =>
-              ScripturesBloc()..add(ScripturesEventLoadScriptures()),
-        ),
+              ScripturesBloc(),
+        ), 
         BlocProvider<VerseBloc>(
           create: (context) => VerseBloc(),
         ),
+        
         BlocProvider<BibleVersionBloc>(
             create: (context) => BibleVersionBloc()
               ..add(BibleVersionFetchSavedBibleVersion())
               ..add(BibleVersionEventFetchAllBibleVersions())),
         BlocProvider<CategoriesBloc>(
+          lazy: false,
           create: (context) =>
               CategoriesBloc()..add(CategoriesEventLoadCategories()),
         ),
       ],
-      child: fluent.FluentApp(
-          debugShowCheckedModeBanner: false,
-          title: 'IBLE',
-          home: FutureBuilder<Widget>(
-            future: getHomeScreen(context),
-            builder: (context, snapshot) {
-              if (snapshot.hasData)
-                return snapshot.data ?? Container();
-              else
-                return Container();
-            },
-          )),
+      child: ChangeNotifierProvider<IbDrawerController>(
+        create: (_) => IbDrawerController(),
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'IBLE',
+            home: FutureBuilder<Widget>(
+              future: getHomeScreen(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData)
+                  return snapshot.data ?? Container();
+                else
+                  return Container();
+              },
+            )),
+      ),
     );
   }
 }
@@ -157,7 +155,7 @@ class _IbleSplashPageState extends State<IbleSplashPage>
         MaterialPageRoute(
           builder: (BuildContext context) => CategoryPage(
             category: Category(
-              id: 2,
+              id: "2",
               title: 'Favorites',
             ),
           ),

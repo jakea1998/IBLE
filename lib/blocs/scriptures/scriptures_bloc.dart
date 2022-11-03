@@ -14,7 +14,7 @@ class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
   final _repo = VerseRepo();
   StreamSubscription<List<Passage>>? _stream1;
   ScripturesBloc() : super(ScripturesState.initial()) {
-    on<ScripturesEventLoadScriptures>((event, emit) {
+    /* on<ScripturesEventLoadScriptures>((event, emit) {
       // TODO: implement event handler
       final _auth = FirebaseAuth.instance;
       if (_stream1 != null) _stream1?.cancel();
@@ -28,21 +28,21 @@ class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
       // TODO: implement event handler
       final scriptures = event.scriptures
           .where((e) =>
-              e.categoryTitle.toString() ==
-              state.selectedCategory?.title.toString())
+              e.categoryId.toString() ==
+              state.selectedCategory?.id.toString())
           .toList();
       print(event.scriptures.length);
       emit(state.copyWith(
           status: ScripturesStatus.loaded,
           allScriptures: event.scriptures,
           displayedScriptures: scriptures));
-    });
+    }); */
     on<ScripturesEventSelectCategory>((event, emit) {
       // TODO: implement event handler
       emit(state.copyWith(status: ScripturesStatus.loading));
       final scriptures = state.allScriptures
               ?.where((e) =>
-                  e.categoryTitle.toString() == event.category.title.toString())
+                  e.categoryId.toString() == event.category.id.toString())
               .toList() ??
           [];
       print(scriptures.length);

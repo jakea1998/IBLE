@@ -41,7 +41,8 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
     on<VerseEventUpdateCategory>((event, emit) {
       emit(state.copyWith(
           verseStatus: VerseStatus.loading, verses: state.verses));
-      print(event.category);
+      print('cat');
+      print(event.category?.title);
       emit(state.copyWith(
         selectedCat: event.category,
         verseStatus: VerseStatus.loaded,
@@ -55,14 +56,15 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
         print(state.selectedCat);
         if (state.selectedCat != null) {
           print('selected');
+
           await _repo.saveVerses(
               category: state.selectedCat!,
               verses: event.verses,
               isNew: event.isNew,
               userId: _auth.currentUser?.uid ?? "");
           emit(state.copyWith(
-            selectedCat: null,
-            verses: [],
+            selectedCat: state.selectedCat,
+            verses: event.verses,
             verseStatus: VerseStatus.loaded,
           ));
         }

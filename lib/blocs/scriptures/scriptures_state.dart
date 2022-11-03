@@ -16,7 +16,7 @@ class ScripturesState extends Equatable {
     return ScripturesState(
         status: ScripturesStatus.initial,
         selectedCategory: Category(
-          id: 2,
+          id: "2",
           title: 'Favorites',
         ),
         allScriptures: [],
