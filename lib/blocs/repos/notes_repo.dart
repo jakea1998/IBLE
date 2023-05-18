@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ible/blocs/repos/base_notes_repo.dart';
 import 'package:ible/blocs/utils/paths.dart';
 import 'package:ible/models/note_model.dart';
 
 class NotesRepo extends BaseNotesRepo {
-  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  
   FirebaseDatabase _firebaseDb = FirebaseDatabase.instance;
   @override
   Future<void> saveNote(

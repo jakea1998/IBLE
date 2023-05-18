@@ -7,7 +7,7 @@ class Category {
   String? parent;
   String? title;
   String? description;
-  int? pinned;
+  Passage? pinned;
   bool? shaded;
   List<NoteModel>? notes;
   DateTime? updated;
@@ -42,7 +42,7 @@ class Category {
         parent: json['parent'].toString(),
         title: json['title'],
         description: json['description'],
-        pinned: json['pinned'],
+        pinned: Passage.fromJson(json['pinned']),
         shaded: json['shaded'],
         updated: json['updated'],
         subCategories: json["subCategories"] == null
@@ -70,7 +70,7 @@ class Category {
     data['parent'] = parent;
     data['title'] = title;
     data['description'] = description;
-    data['pinned'] = pinned;
+    data['pinned'] = pinned?.toJson();
     data['shaded'] = shaded;
     data['verses'] = verses == null ? null : verses1;
     data['subCategories'] = subCategories == null

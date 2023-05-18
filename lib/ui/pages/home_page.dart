@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:ible/ui/widgets/sliding_scaffold.widget.dart';
 
 import 'package:ible/theme.dart';
-import 'package:ible/ui/widgets/ible_drawer.widget.dart';
-import 'package:provider/provider.dart';
+
+import '../widgets/sliding_scaffold_new.dart';
 
 //This shows the root of the application
 //All widgets

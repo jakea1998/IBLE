@@ -2,7 +2,7 @@ part of 'categories_bloc.dart';
 
 abstract class CategoriesEvent extends Equatable {
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class CategoriesEventInitCategories extends CategoriesEvent {}
@@ -39,4 +39,12 @@ class CategoriesEventDeleteCategory extends CategoriesEvent {
   CategoriesEventDeleteCategory({required this.category});
   @override
   List<Object> get props => [category];
+}
+
+class CategoriesEventPinOrUnpinVerse extends CategoriesEvent {
+  final bool pinOrUnpin;
+  final Passage? verse;
+  CategoriesEventPinOrUnpinVerse({required this.pinOrUnpin,this.verse});
+  @override
+  List<Object?> get props => [pinOrUnpin,verse];
 }

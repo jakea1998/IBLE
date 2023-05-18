@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ible/blocs/repos/verse_repo.dart';
+import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/failure_model.dart';
 import 'package:ible/models/passage_model.dart';
@@ -18,7 +19,7 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
   VerseBloc() : super(VerseState.initial()) {
     on<VerseEventSearchVerse>((event, emit) async {
       try {
-        final verses = await VerseRepo().searchVerses(query: event.query ?? '');
+        final verses = await _repo.searchVerses(query: event.query ?? '', bibleVersion: event.bibleVersion,);
 
         emit(state.copyWith(verseStatus: VerseStatus.loaded, verses: verses));
       } catch (e) {
@@ -60,6 +61,7 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
           await _repo.saveVerses(
               category: state.selectedCat!,
               verses: event.verses,
+              bibleVersion: event.bibleVersion,
               isNew: event.isNew,
               userId: _auth.currentUser?.uid ?? "");
           emit(state.copyWith(

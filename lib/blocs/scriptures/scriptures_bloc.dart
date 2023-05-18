@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ible/blocs/repos/verse_repo.dart';
+import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/passage_model.dart';
 
@@ -12,6 +13,7 @@ part 'scriptures_state.dart';
 
 class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
   final _repo = VerseRepo();
+  final _auth = FirebaseAuth.instance;
   StreamSubscription<List<Passage>>? _stream1;
   ScripturesBloc() : super(ScripturesState.initial()) {
     /* on<ScripturesEventLoadScriptures>((event, emit) {
@@ -50,6 +52,30 @@ class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
           status: ScripturesStatus.loaded,
           selectedCategory: event.category,
           displayedScriptures: scriptures));
+    });
+    on<ScripturesEventMoveVerse>((event, emit) async {
+      try {
+        await _repo.deleteVerse(
+            category: event.oldCategory,
+            verse: event.verse,
+            userId: _auth.currentUser?.uid ?? "");
+        await _repo.saveVerses(
+            isNew: false,
+            category: event.newCategory,
+            verses: [event.verse],
+            bibleVersion: event.verse.bibleVersion ?? Data.empty(),
+            userId: _auth.currentUser?.uid ?? "");
+      } catch (e) {
+        print(e);
+      }
+    });
+    on<ScripturesEventDeleteVerse>((event, emit) async {
+      // TODO: implement event handler
+      print('delete11');
+      await _repo.deleteVerse(
+          category: event.category,
+          verse: event.verse,
+          userId: _auth.currentUser?.uid ?? "");
     });
   }
 }

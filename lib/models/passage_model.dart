@@ -1,4 +1,4 @@
-
+import 'package:ible/models/bible_version.dart';
 
 class Passage {
   String? id;
@@ -6,6 +6,7 @@ class Passage {
   String? bookId;
   String? bibleId;
   //List<String>? chapterIds;
+  Data? bibleVersion;
   String? reference;
   String? categoryId;
   String? content;
@@ -16,7 +17,8 @@ class Passage {
       this.orgId,
       this.bookId,
       this.bibleId,
-     // this.chapterIds,
+      this.bibleVersion,
+      // this.chapterIds,
       this.categoryId,
       this.reference,
       this.content,
@@ -28,7 +30,8 @@ class Passage {
         orgId: '',
         bookId: '',
         bibleId: '',
-       // chapterIds: [],
+        bibleVersion: null,
+        // chapterIds: [],
         categoryId: '',
         reference: '',
         content: '',
@@ -43,7 +46,9 @@ class Passage {
         orgId: json['orgId'],
         bibleId: json['bibleId'],
         bookId: json['bookId'],
-       // chapterIds: chapterIdsList,
+        bibleVersion: Data.fromJson(
+            json['bibleVersion'] as Map<String, dynamic>),
+        // chapterIds: chapterIdsList,
         categoryId: json['categoryId'],
         reference: json['reference'].toString(),
         content: json['content'].toString(),
@@ -52,12 +57,13 @@ class Passage {
   }
   Map<dynamic, dynamic> toJson() {
     final data = Map<dynamic, dynamic>();
-    
+
     data['id'] = id;
     data['orgId'] = orgId;
     data['bookId'] = bookId;
     data['bibleId'] = bibleId;
-   // data['chapterIds'] = chapterIds;
+    data['bibleVersion'] = bibleVersion?.toJson();
+    // data['chapterIds'] = chapterIds;
     data['reference'] = reference;
     data['content'] = content.toString();
     data['categoryId'] = categoryId;

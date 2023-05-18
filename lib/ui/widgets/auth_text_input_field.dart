@@ -10,9 +10,10 @@ class ScriptureInputFormField extends StatelessWidget {
   final Function()? onTap;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
+  final TextCapitalization? textCapitalization;
   final bool obscureText;
   final Icon? prefixIcon;
-  
+
   const ScriptureInputFormField({
     Key? key,
     this.labelText,
@@ -20,6 +21,7 @@ class ScriptureInputFormField extends StatelessWidget {
     this.validator,
     this.onEditingComplete,
     this.onChanged,
+    this.textCapitalization,
     this.onTap,
     this.controller,
     this.prefixIcon,
@@ -41,7 +43,6 @@ class ScriptureInputFormField extends StatelessWidget {
         hintStyle: Theme.of(context).textTheme.bodyText1!.copyWith(
               fontSize: 20,
               color: Colors.grey[500],
-              
             ),
         filled: true,
         fillColor: Colors.grey[200],
@@ -53,14 +54,13 @@ class ScriptureInputFormField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(10)),
-         errorBorder: OutlineInputBorder(
+        errorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.orange[400] ?? Colors.orange),
-            
             borderRadius: BorderRadius.circular(10)),
         focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.orange[400] ?? Colors.orange),
-            
             borderRadius: BorderRadius.circular(10)),
+            
         /* enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(26.0),
           borderSide: BorderSide(color: ThemeColors.greyB2B2B2, width: 1),
@@ -85,6 +85,7 @@ class ScriptureInputFormField extends StatelessWidget {
       onEditingComplete: onEditingComplete,
       onChanged: onChanged,
       enabled: enabled,
+      textCapitalization: textCapitalization ?? TextCapitalization.none,
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,

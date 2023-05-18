@@ -26,4 +26,4 @@ class VerseState extends Equatable {
   List<Object?> get props => [verseStatus,selectedCat, verses, failure];
 }
 
-enum VerseStatus { initial, loading, loaded, error }
+enum VerseStatus { initial, loading, loaded, error, no_matches_error }

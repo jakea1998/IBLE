@@ -1,15 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:flutter/cupertino.dart';
 
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
-import 'package:http/http.dart' as http;
 
 import 'package:flutter/services.dart';
 import 'package:ible/blocs/utils/paths.dart';

@@ -8,6 +8,7 @@ import 'package:ible/ui/pages/versions_page.dart';
 import 'package:ible/ui/widgets/pill.dart';
 import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
 import 'package:ible/ui/widgets/sliding_scaffold.widget.dart';
+import 'package:ible/ui/widgets/sliding_scaffold_new.dart';
 
 import '../../theme.dart';
 

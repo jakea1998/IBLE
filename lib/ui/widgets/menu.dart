@@ -12,12 +12,15 @@ import 'package:ible/blocs/verse/verse_bloc.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/note_model.dart';
 import 'package:ible/ui/pages/add_scripture_page.dart';
-import 'package:ible/ui/pages/category.page.dart';
+import 'package:ible/ui/pages/add_scripture_page_new.dart';
+import 'package:ible/ui/pages/category_page.dart';
 import 'package:ible/ui/pages/settings_page.dart';
 import 'package:ible/ui/pages/sign_in.dart';
 import 'package:ible/ui/widgets/custom_tree_view.dart';
 import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
 import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
+import 'package:ible/utils/delete_cat.dart';
+import 'package:ible/utils/rename_cat.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math' as math;
@@ -282,7 +285,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                     Navigator.push(
                                       context,
                                       SlideFromBottomPageRoute(
-                                        widget: AddScripturePage(),
+                                        widget: AddScripturePageNew(isSubCategory: false,),
                                       ),
                                     );
                                   },
@@ -1043,7 +1046,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   CupertinoActionSheetAction(
                     onPressed: () {
                       Navigator.pop(context);
-                      openFromDhaza(context, category);
+                      renameCategory(context, category);
                       // openEditCategoryDialog(context, category);
                       // thing(context);
                     },
@@ -1076,7 +1079,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddScripturePage(
+                            builder: (context) => AddScripturePageNew(
+                              isSubCategory: false,
                               category: category,
                             ),
                           ),
@@ -1105,9 +1109,9 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                         final newNote = NoteModel(
                             id: Uuid().v1(),
                             parentId:
-                                category.parent == "null" ? category.id : null,
+                                category.parent.toString() == "null" ? category.id : null,
                             subParentId:
-                                category.parent != "null" ? category.id : null,
+                                category.parent.toString() != "null" ? category.id : null,
                             createdAt: DateTime.now(),
                             title: "Note 1");
                         BlocProvider.of<NotesBloc>(context)

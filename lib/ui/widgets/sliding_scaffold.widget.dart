@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ible/theme.dart';
 //import 'package:ible/ui/widgets/dnotification_dialog.widget.dart';
@@ -176,7 +176,7 @@ class _SlidingScaffoldState extends State<SlidingScaffold>
           child: Material(
             animationDuration: duration,
             elevation: 8,
-            color: Theme.of(context).appBarTheme.color,
+            color: Theme.of(context).appBarTheme.backgroundColor,
             child: SafeArea(
               bottom: false,
               child: Container(
@@ -243,3 +243,4 @@ class _SlidingScaffoldState extends State<SlidingScaffold>
     );
   }
 }
+ */

@@ -24,8 +24,9 @@ class VerseEventDeleteVerse extends VerseEvent {
 }
 
 class VerseEventSearchVerse extends VerseEvent {
+  final Data bibleVersion;
   final String? query;
-  const VerseEventSearchVerse({this.query});
+  const VerseEventSearchVerse({this.query,required this.bibleVersion});
   @override
   List<Object?> get props => [query];
 }
@@ -33,7 +34,9 @@ class VerseEventSearchVerse extends VerseEvent {
 class VerseEventSaveScripture extends VerseEvent {
   final bool isNew;
   final List<Passage> verses;
-  const VerseEventSaveScripture({required this.verses,required this.isNew});
+  final Data bibleVersion;
+  const VerseEventSaveScripture(
+      {required this.verses, required this.isNew, required this.bibleVersion});
   @override
   List<Object?> get props => [verses];
 }

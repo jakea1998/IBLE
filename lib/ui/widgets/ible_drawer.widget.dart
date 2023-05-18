@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ible/models/category_model.dart';
-import 'package:ible/ui/pages/category.page.dart';
+import 'package:ible/ui/pages/category_page.dart';
 
 import 'package:ible/ui/widgets/dcupertino_overflow_menu.widget.dart';
 import 'package:ible/ui/widgets/drawer.controller.dart';
