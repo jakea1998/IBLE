@@ -34,16 +34,16 @@ class AuthenticationBloc
       }
     });
     on<AuthenticationLogoutRequested>((event, emit) async {
-      await _authenticationRepository.signOut();
+      //await _authenticationRepository.signOut();
     });
     on<AuthenticationDeleteRequested>((event, emit) async {
-      await _authenticationRepository.deleteUserFromFirebaseAuth(
-          user: state.user);
-      await _authenticationRepository.deleteUserFromFirestore(user: state.user);
+      ///await _authenticationRepository.deleteUserFromFirebaseAuth(
+         // user: state.user);
+     //await _authenticationRepository.deleteUserFromFirestore(user: state.user);
     });
     on<AuthenticationPasswordResetRequested>((event, emit) async{
-      await _authenticationRepository
-          .sendPasswordResetEmail(state.user.email ?? '');
+     /// await _authenticationRepository
+        //  .sendPasswordResetEmail(state.user.email ?? '');
     });
   }
 

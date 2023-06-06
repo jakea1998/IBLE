@@ -42,18 +42,24 @@ class Passage {
     List<String>? chapterIdsList = [];
     //json['chapterIds'].forEach((e) => chapterIdsList.add(e));
     return Passage(
-        id: json['id'],
-        orgId: json['orgId'],
-        bibleId: json['bibleId'],
-        bookId: json['bookId'],
-        bibleVersion: Data.fromJson(
-            json['bibleVersion'] as Map<String, dynamic>),
+        id: json['id'] == null ? '' : json['id'].toString(),
+        orgId: json['orgId'] == null ? '' : json['orgId'].toString(),
+        bibleId: json['bibleId'] == null ? '' : json['bibleId'].toString(),
+        bookId: json['bookId'] == null ? '' : json['bookId'].toString(),
+        bibleVersion: json['bibleVersion'] != null ? Data.fromJson(
+            json['bibleVersion'] as Map<String, dynamic>) : null,
         // chapterIds: chapterIdsList,
-        categoryId: json['categoryId'],
-        reference: json['reference'].toString(),
-        content: json['content'].toString(),
-        verseCount: json['verseCount'].toString(),
-        copyright: json['copyright'].toString());
+        categoryId: json['categoryId'] == null
+            ? ''
+            : json['categoryId'].toString(),
+        reference: json['reference'] == null ? '' : json['reference'].toString(),
+        content: json['content'] == null ? '' : json['content'].toString(),
+        verseCount: json['verseCount'] == null
+            ? ''
+            : json['verseCount'].toString(),
+        copyright: json['copyright'] == null
+            ? ''
+            : json['copyright'].toString());
   }
   Map<dynamic, dynamic> toJson() {
     final data = Map<dynamic, dynamic>();

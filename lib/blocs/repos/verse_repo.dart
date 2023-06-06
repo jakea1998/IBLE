@@ -15,7 +15,7 @@ import 'dart:convert';
 class VerseRepo extends BaseVerseRepo {
   FirebaseFirestore _fs = FirebaseFirestore.instance;
   FirebaseDatabase _firebaseDb = FirebaseDatabase.instance;
-  /*  @override
+  @override
   Stream<List<Passage>> getVerses({required String userId}) {
     return _fs
         .collection(Paths.verses_collection)
@@ -24,15 +24,18 @@ class VerseRepo extends BaseVerseRepo {
         .snapshots()
         .map((event) =>
             event.docs.map((e) => Passage.fromJson(e.data())).toList());
-  } */
+  }
 
   @override
-  Future<List<Passage>> searchVerses({required String query,required Data bibleVersion}) async {
+  Future<List<Passage>> searchVerses(
+      {required String query, required Data bibleVersion}) async {
     // TODO: implement searchVerses
-    String bibleVersionID = 'de4e12af7f28f599-01';
+    String bibleVersionID = bibleVersion.id.toString();
     //https://api.scripture.api.bible/v1/bibles/version='de4e12af7f28f599-01'/search?query="John"&offset=0
     String offset = "0";
     final query2 = query.replaceAll(" ", "%20");
+    print(bibleVersionID.toString());
+    print(query2);
     String url =
         'https://api.scripture.api.bible/v1/bibles/${bibleVersion.id.toString()}/search?query=${query2}&offset=${offset}';
     print('repo');
@@ -40,13 +43,19 @@ class VerseRepo extends BaseVerseRepo {
         await http.get(Uri.parse(url), headers: {'api-key': Constants.api_key});
 
     final json1 = _returnResponse(r1);
+    print(json1);
     if (json1['data']['total'] == '0') {
       print(json1['data']['total']);
+      print("no data");
       return [];
     } else {
       final verses = json1['data']['passages'];
       print(verses);
-      final mapped = verses.map<Passage>((e) => Passage.fromJson(e)).toList();
+      List<Passage> mapped = [];
+      try{
+      mapped = verses.map<Passage>((e) => Passage.fromJson(e)).toList();}catch(e){
+        print(e);
+      }
 
       print(mapped);
       return mapped;
@@ -103,6 +112,7 @@ class VerseRepo extends BaseVerseRepo {
 
     // batch.commit();
   }
+
   @override
   Future<void> deleteVerse(
       {required Category category,
@@ -110,7 +120,6 @@ class VerseRepo extends BaseVerseRepo {
       required String userId}) async {
     // TODO: implement deleteVerse
     if (category.parent == "null" || category.parent == null) {
-     
       await _firebaseDb
           .ref()
           .child(Paths.categories_collection)
@@ -121,7 +130,6 @@ class VerseRepo extends BaseVerseRepo {
           .child(verse.id?.replaceAll(".", " ") ?? "")
           .remove();
     } else {
-     
       await _firebaseDb
           .ref()
           .child(Paths.categories_collection)
@@ -139,7 +147,8 @@ class VerseRepo extends BaseVerseRepo {
 
 dynamic _returnResponse(http.Response response) {
   var responseReturn;
-
+  print(response.statusCode);
+  print(response.body.toString());
   switch (response.statusCode) {
     case 200:
       var responseJson = json.decode(response.body);

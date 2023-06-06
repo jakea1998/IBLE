@@ -15,6 +15,7 @@ import 'package:ible/theme.dart';
 import 'package:ible/ui/pages/add_scripture_page_new.dart';
 import 'package:ible/ui/widgets/categories_menu_popup.dart';
 import 'package:ible/ui/widgets/dnotification_dialog.widget.dart';
+import 'package:ible/ui/widgets/no_scriptures_saved.dart';
 import 'package:ible/ui/widgets/scripture_result_list_item.dart';
 import 'package:ible/ui/widgets/scripture_widget.dart';
 import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
@@ -31,9 +32,11 @@ class CategoryPage extends StatefulWidget {
   _CategoryPageState createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> {
+class _CategoryPageState extends State<CategoryPage>
+    with SingleTickerProviderStateMixin {
   Category? category;
-  final SlidableController slidableController = SlidableController();
+ late SlidableController slidableController;
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +45,8 @@ class _CategoryPageState extends State<CategoryPage> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (widget.category?.parent != "null" &&
-              widget.category?.parent != null)
+            (widget.category?.parent != "null" &&
+              widget.category?.parent != null) ?
             Padding(
               padding: EdgeInsets.only(right: 7, bottom: 12),
               child: Container(
@@ -52,7 +55,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   decoration: BoxDecoration(
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(5))),
-            ),
+            ) : Container(),
           Text(
             widget.category?.title ?? '',
             style: TextStyle(
@@ -61,11 +64,11 @@ class _CategoryPageState extends State<CategoryPage> {
         ],
       ),
       onWillOpen: () {
-        if (slidableController.activeState != null) {
+        /*  if (slidableController.) {
           slidableController.activeState?.close();
           return false;
         } else
-          return true;
+          return true; */
       },
       actions: [
         CategoriesMenuPopup(category: widget.category ?? Category.favorite()),
@@ -95,7 +98,7 @@ class _CategoryPageState extends State<CategoryPage> {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             color: Colors.white,
-            child: ListView.separated(
+            child: (state.selectedCategory?.verses?.length ?? 0) > 0 ?ListView.separated(
               itemCount: state.selectedCategory?.verses?.length ?? 0,
               separatorBuilder: (context, index) {
                 return Container(
@@ -202,55 +205,52 @@ class _CategoryPageState extends State<CategoryPage> {
                       state.selectedCategory ?? Category.favorite(),
                 );
               },
-            ),
+            ) : NoScripturesSaved(),
           );
         },
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24.0),
-            child: FloatingActionButton(
-              elevation: 0,
-              backgroundColor: ThemeColors.greyA7B0B3,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  SlideFromBottomPageRoute(
-                    widget: AddScripturePageNew(
-                      parentCategory: BlocProvider.of<CategoriesBloc>(context)
-                                  .state
-                                  .selectedCategory
-                                  ?.parent
-                                  .toString() ==
-                              "null"
-                          ? null
-                          : BlocProvider.of<CategoriesBloc>(context)
-                              .state
-                              .categories
-                              ?.firstWhere((element) =>
-                                  element.id.toString() ==
-                                  BlocProvider.of<CategoriesBloc>(context)
-                                      .state
-                                      .selectedCategory
-                                      ?.parent
-                                      .toString()),
-                      isSubCategory: BlocProvider.of<CategoriesBloc>(context)
-                                  .state
-                                  .selectedCategory
-                                  ?.parent
-                                  .toString() ==
-                              "null"
-                          ? false
-                          : true,
-                      category: widget.category ?? Category.favorite(),
-                    ),
+          FloatingActionButton(
+            elevation: 0,
+            backgroundColor: ThemeColors.greyA7B0B3,
+            onPressed: () {
+              Navigator.push(
+                context,
+                SlideFromBottomPageRoute(
+                  widget: AddScripturePageNew(
+                    parentCategory: BlocProvider.of<CategoriesBloc>(context)
+                                .state
+                                .selectedCategory
+                                ?.parent
+                                .toString() ==
+                            "null"
+                        ? null
+                        : BlocProvider.of<CategoriesBloc>(context)
+                            .state
+                            .categories
+                            ?.firstWhere((element) =>
+                                element.id.toString() ==
+                                BlocProvider.of<CategoriesBloc>(context)
+                                    .state
+                                    .selectedCategory
+                                    ?.parent
+                                    .toString()),
+                    isSubCategory: BlocProvider.of<CategoriesBloc>(context)
+                                .state
+                                .selectedCategory
+                                ?.parent
+                                .toString() ==
+                            "null"
+                        ? false
+                        : true,
+                    category: widget.category ?? Category.favorite(),
                   ),
-                );
-              },
-              child: Image.asset('assets/images/icons/Add_56x56_PNG.png'),
-            ),
+                ),
+              );
+            },
+            child: Image.asset('assets/images/icons/Add_56x56_PNG.png'),
           ),
         ],
       ),
@@ -261,8 +261,8 @@ class _CategoryPageState extends State<CategoryPage> {
   void initState() {
     super.initState();
     category = widget.category;
+    slidableController = SlidableController(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-     
       if (widget.message != null) {
         showNotificationDialog(context, widget.message);
       }

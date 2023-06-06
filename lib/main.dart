@@ -24,8 +24,8 @@ import 'models/category_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
   await Firebase.initializeApp();
+
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   runApp(App());
 }
@@ -49,7 +49,7 @@ class MyApp extends State<App> {
     });
   }
 
-  Future<Widget> getHomeScreen(BuildContext context) async {
+  Future<Widget> getHomeScreen(BuildContext context1) async {
     try {
       final _auth = FirebaseAuth.instance;
       final user = _auth.currentUser;
@@ -57,22 +57,21 @@ class MyApp extends State<App> {
         await _auth.signInAnonymously();
 
         print('signed in anonymously');
-         /* BlocProvider.of<CategoriesBloc>(context)
+        /* BlocProvider.of<CategoriesBloc>(context)
           ..add(CategoriesEventSelectCategory(
             category: BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
           ));  */
-        return CategoryPage(
-          category: BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
-        );
+        return IbleSplashPage(
+            );
       } else {
         print('signed in');
-      /*   BlocProvider.of<CategoriesBloc>(context)
+        /*   BlocProvider.of<CategoriesBloc>(context)
           ..add(CategoriesEventSelectCategory(
             category:  BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
           ));  */
-        return CategoryPage(
-          category: /* BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ??  */Category.favorite()
-        );
+        return IbleSplashPage(
+           /* BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ??  */
+               );
       }
     } catch (e) {
       print(e);
@@ -82,20 +81,20 @@ class MyApp extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    
     return MultiBlocProvider(
       providers: [
         BlocProvider<SaveVerseBloc>(
           create: (context) => SaveVerseBloc(),
         ),
         BlocProvider<ScripturesBloc>(
-          create: (context) =>
-              ScripturesBloc(),
-        ), 
+          create: (context) => ScripturesBloc(),
+        ),
         BlocProvider<VerseBloc>(
           create: (context) => VerseBloc(),
         ),
-        
         BlocProvider<BibleVersionBloc>(
+            lazy: false,
             create: (context) => BibleVersionBloc()
               ..add(BibleVersionFetchSavedBibleVersion())
               ..add(BibleVersionEventFetchAllBibleVersions())),
@@ -125,6 +124,7 @@ class MyApp extends State<App> {
 }
 
 class IbleSplashPage extends StatefulWidget {
+  
   @override
   _IbleSplashPageState createState() => _IbleSplashPageState();
 }
@@ -153,12 +153,10 @@ class _IbleSplashPageState extends State<IbleSplashPage>
       Duration(milliseconds: 1500),
       () => Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (BuildContext context) => CategoryPage(
-            category: Category(
-              id: "2",
-              title: 'Favorites',
-            ),
-          ),
+          builder: (BuildContext context) => CategoryPage(category:BlocProvider.of<CategoriesBloc>(context)
+                    .state
+                    .favoriteCategory ??
+                Category.favorite())
         ),
       ),
     );

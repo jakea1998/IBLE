@@ -33,10 +33,10 @@ class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
     });
 
     on<BibleVersionEventSaveBibleVersion>((event, emit) async {
-     // emit(state.copyWith(status: BibleVersionStatus.loading));
+      // emit(state.copyWith(status: BibleVersionStatus.loading));
       try {
         //final model = await _bibleRepo.get();
-       await _bibleRepo.saveBibleVersion(
+        await _bibleRepo.saveBibleVersion(
             userId: _auth.currentUser?.uid ?? "",
             savedVersion: event.data ?? Data.empty());
         //yield state.copyWith(
@@ -49,14 +49,20 @@ class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
                 message: "Sorry, we couldn't save the bible version.")));
       }
     });
-    on<BibleVersionFetchSavedBibleVersion>((event, emit) {
+    on<BibleVersionFetchSavedBibleVersion>((event, emit) async {
       try {
         if (_stream1 != null) _stream1 == null;
 
         _stream1 = _bibleRepo
             .fetchSavedBibleVersion(userId: _auth.currentUser?.uid ?? "")
             .listen((event) {
-          add(BibleVersionUpdateBibleVersion(data: event));
+          Data bibleData = event;
+          if (event.id == null || event.id == "") {
+            bibleData = Data.defaultVersion();
+          }
+          print('id');
+          print(bibleData.id.toString());
+          add(BibleVersionUpdateBibleVersion(data: bibleData));
         });
       } on Exception catch (e) {
         emit(state.copyWith(

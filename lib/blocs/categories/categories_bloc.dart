@@ -15,7 +15,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
   CategoryRepo _categoryRepo = CategoryRepo();
   FirebaseAuth _auth = FirebaseAuth.instance;
   CategoriesBloc() : super(CategoriesState.initial()) {
-    on<CategoriesEventLoadCategories>((event, emit) {
+    on<CategoriesEventLoadCategories>((event, emit) async{
       emit(state.copyWith(
           status: CategoriesStatus.loading, categories: state.categories));
       try {
@@ -102,7 +102,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     on<CategoriesEventDeleteCategory>((event, emit) async {
       try {
         await _categoryRepo.deleteCategory(
-            category: event.category, userId: _auth.currentUser?.uid ?? '');
+            category: event.category, userId:_auth.currentUser?.uid ?? '');
       } catch (e) {
         emit(state.copyWith(
             categories: state.categories, status: CategoriesStatus.error));

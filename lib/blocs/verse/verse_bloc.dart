@@ -18,9 +18,15 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   VerseBloc() : super(VerseState.initial()) {
     on<VerseEventSearchVerse>((event, emit) async {
+      emit(state.copyWith(verseStatus: VerseStatus.loading));
       try {
-        final verses = await _repo.searchVerses(query: event.query ?? '', bibleVersion: event.bibleVersion,);
-
+        print("search");
+        final verses = await _repo.searchVerses(
+          query: event.query ?? '',
+          bibleVersion: event.bibleVersion,
+        );
+        print("verse length");
+        print(verses.length);
         emit(state.copyWith(verseStatus: VerseStatus.loaded, verses: verses));
       } catch (e) {
         emit(state.copyWith(

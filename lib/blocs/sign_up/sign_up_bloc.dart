@@ -96,9 +96,9 @@ class SignupBloc extends Bloc<SignupEvent, SignupState>
     yield SignupState.loading();
     try {
       _email = email;
-      await _authenticationRepository.signUpWithEmailAndPassword(
-        email: email,
-        password: password,
+      await _authenticationRepository.signInWithEmailAddressAndPassword(
+         email,
+       password,
       );
 
       yield SignupState.success();

@@ -18,80 +18,63 @@ class VerseDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
+      child: Container(
+        color: ThemeColors.greyECECEC,
+        child: BlocBuilder<VerseBloc, VerseState>(
+          builder: (context, state) {
+            print(state.verses?.length);
+            if (state.verseStatus == VerseStatus.no_matches_error) {
+              return NoMatches();
+            } else
+              return ListView.separated(
+                shrinkWrap: true,
+                itemCount: state.verses?.length ?? 0,
+                itemBuilder: (context, position) {
+                  print(state.verses?[position].content);
+                  return Slidable(
                       child: Container(
-                        color: ThemeColors.greyECECEC,
-                        child: BlocBuilder<VerseBloc, VerseState>(
-                          builder: (context, state) {
-                            
-                            if (state.verseStatus ==
-                                VerseStatus.no_matches_error) {
-                              return NoMatches();
-                            } else
-                              return ListView.separated(
-                               
-                                shrinkWrap: true,
-                                itemCount: state.verses?.length ?? 0,
-                                itemBuilder: (context, position) {
-                                  
-                                  return Slidable(
-                                    actionPane:
-                                        SlidableDrawerActionPane(),
-                                    child: Container(
-                                      color: Colors.transparent,
-                                      padding:
-                                          const EdgeInsets.symmetric(
-                                        vertical: 8.0,
-                                        horizontal: 16.0,
-                                      ),
-                                      child: ScriptureResultListItem(
-                                        bibleVersion: BlocProvider.of<
-                                                        BibleVersionBloc>(
-                                                    context)
-                                                .state
-                                                .savedVersion ??
-                                            Data.empty(),
-                                        scripture:
-                                            state.verses?[position] ??
-                                                Passage.empty(),
-                                      ),
-                                    ),
-                                    actions: <Widget>[],
-                                    secondaryActions: <Widget>[
-                                      IconSlideAction(
-                                        caption: 'DELETE',
-                                        color: ThemeColors.redDD4C4F,
-                                        iconWidget: Padding(
-                                          padding:
-                                              const EdgeInsets.only(
-                                                  bottom: 8.0),
-                                          child: ImageIcon(
-                                            AssetImage(
-                                                'assets/images/icons/delete.png'),
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          context.read<VerseBloc>()
-                                            ..add(VerseEventDeleteVerse(
-                                                verse: state.verses?[
-                                                        position] ??
-                                                    Passage.empty()));
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                                separatorBuilder: (context, index) =>
-                                    Container(
-                                  margin: EdgeInsets.only(
-                                      left: 16, top: 4, bottom: 4),
-                                  height: 0.5,
-                                  color: ThemeColors.greyB2B2B2,
-                                ),
-                              );
-                          },
+                        color: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
+                        child: ScriptureResultListItem(
+                          bibleVersion:
+                              BlocProvider.of<BibleVersionBloc>(context)
+                                      .state
+                                      .savedVersion ??
+                                  Data.empty(),
+                          scripture: state.verses?[position] ?? Passage.empty(),
                         ),
                       ),
-                    );
+                      endActionPane: ActionPane(
+                        motion: ScrollMotion(),
+                        children: [
+                          SlidableAction(
+                            label: 'DELETE',
+                            backgroundColor: ThemeColors.redDD4C4F,
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete,
+                            onPressed: (context) async {
+                              context.read<VerseBloc>()
+                                ..add(VerseEventDeleteVerse(
+                                    verse: state.verses?[position] ??
+                                        Passage.empty()));
+                            },
+                          ),
+                        ],
+                      ));
+                },
+                separatorBuilder: (context, index) => Container(
+                  margin: EdgeInsets.only(left: 16, top: 4, bottom: 4),
+                  height: 0.5,
+                  color: ThemeColors.greyB2B2B2,
+                ),
+              );
+          },
+        ),
+      ),
+    );
   }
 }

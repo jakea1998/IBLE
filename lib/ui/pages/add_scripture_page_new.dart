@@ -58,11 +58,13 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
 
     _verseTextEditingController
       ..addListener(() {
+       
+        
         context.read<VerseBloc>().add(VerseEventSearchVerse(
             query: _verseTextEditingController.text,
             bibleVersion:
                 BlocProvider.of<BibleVersionBloc>(context).state.savedVersion ??
-                    Data.empty()));
+                    Data.defaultVersion()));
       });
     _categoryTextEditingController =
         TextEditingController(text: widget.category?.title ?? "");
@@ -194,17 +196,17 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                               tabController: _upTabController,
                             ),
                       _upTabController.index == 0
-                          ? 
-                          IgnorePointer(
-                            ignoring: widget.isSubCategory && widget.category != null,
-                         child: CategoryEditorEnabled(
-                              key: UniqueKey(),
-                              hintText: !widget.isSubCategory
-                                  ? "Type New Category Name"
-                                  : "Type New Subcategory Name",
-                              categoryTextEditingController:
-                                  _categoryTextEditingController,
-                            ))
+                          ? IgnorePointer(
+                              ignoring: widget.isSubCategory &&
+                                  widget.category != null,
+                              child: CategoryEditorEnabled(
+                                key: UniqueKey(),
+                                hintText: !widget.isSubCategory
+                                    ? "Type New Category Name"
+                                    : "Type New Subcategory Name",
+                                categoryTextEditingController:
+                                    _categoryTextEditingController,
+                              ))
                           : CategoryEditorDisabled(
                               key: UniqueKey(),
                               hintText: "Choose Category",
@@ -237,22 +239,19 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                       VerseDisplay(),
                       divider,
                       SaveButton(onPressed: () {
-                       
                         if (_formKey.currentState?.validate() ?? false) {
-                          
-                          if (widget.isSubCategory && BlocProvider.of<CategoriesBloc>(context)
-                                    .state
-                                    .subCategoriesTitles
-                                    ?.indexWhere((element) =>
-                                        element.toLowerCase() ==
-                                        _categoryTextEditingController.text
-                                            .toLowerCase()) !=
-                                -1) {
-                            
-                              showNotificationDialog(
-                                  context, "Subcategory already exists");
-                              return;
-                            
+                          if (widget.isSubCategory &&
+                              BlocProvider.of<CategoriesBloc>(context)
+                                      .state
+                                      .subCategoriesTitles
+                                      ?.indexWhere((element) =>
+                                          element.toLowerCase() ==
+                                          _categoryTextEditingController.text
+                                              .toLowerCase()) !=
+                                  -1) {
+                            showNotificationDialog(
+                                context, "Subcategory already exists");
+                            return;
                           } else if (BlocProvider.of<CategoriesBloc>(context)
                                   .state
                                   .categoriesAndSubCategoriesTitles
@@ -265,7 +264,6 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                                 context, "Category already exists");
                             return;
                           } else {
-                           
                             BlocProvider.of<VerseBloc>(context).add(
                                 VerseEventSaveScripture(
                                     bibleVersion:
@@ -273,7 +271,7 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                                                     context)
                                                 .state
                                                 .savedVersion ??
-                                            Data.empty(),
+                                            Data.defaultVersion(),
                                     verses: BlocProvider.of<VerseBloc>(context)
                                             .state
                                             .verses ??

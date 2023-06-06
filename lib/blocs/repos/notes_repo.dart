@@ -13,7 +13,7 @@ class NotesRepo extends BaseNotesRepo {
     // TODO: implement createCategory
     if (note.subParentId == "null" || note.subParentId == null)
       await _firebaseDb
-          .ref()
+          .reference()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)
@@ -23,7 +23,7 @@ class NotesRepo extends BaseNotesRepo {
           .set(note.toJson());
     else
       await _firebaseDb
-          .ref()
+          .reference()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)
@@ -53,7 +53,7 @@ class NotesRepo extends BaseNotesRepo {
     // TODO: implement deleteCategory
     if (note.subParentId == "null" || note.subParentId == null)
       await _firebaseDb
-          .ref()
+          .reference()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)
@@ -63,7 +63,7 @@ class NotesRepo extends BaseNotesRepo {
           .remove();
     else
       await _firebaseDb
-          .ref()
+          .reference()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)

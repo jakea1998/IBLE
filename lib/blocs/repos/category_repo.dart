@@ -12,7 +12,7 @@ class CategoryRepo extends BaseCategoryRepo {
     // TODO: implement createCategory
     if (category.parent == "null" || category.parent == null)
       await _firebaseDb
-          .ref()
+          .reference()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)
@@ -20,7 +20,7 @@ class CategoryRepo extends BaseCategoryRepo {
           .set(category.toJson());
     else
       await _firebaseDb
-          .ref()
+          .reference()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)
@@ -36,7 +36,7 @@ class CategoryRepo extends BaseCategoryRepo {
   Stream<List<Category>> getAllCategories({required String userId}) {
     // TODO: implement getAllCategories
     return _firebaseDb
-        .ref()
+        .reference()
         .child(Paths.categories_collection)
         .child(userId)
         .child(Paths.categories_subcollection)
@@ -44,7 +44,7 @@ class CategoryRepo extends BaseCategoryRepo {
         .map((e) {
       List<Category>? categories = [];
     
-      if (e.snapshot.exists) {
+      if (e.snapshot.value != null) {
         Map<dynamic, dynamic> map = e.snapshot.value as Map<dynamic,dynamic>;
         map.forEach((key, value) {
           categories.add(Category.fromJson(
@@ -62,11 +62,11 @@ class CategoryRepo extends BaseCategoryRepo {
     // TODO: implement initializeCategories
 
     await _firebaseDb
-        .ref().child(Paths.categories_collection)
+        .reference().child(Paths.categories_collection)
         .child(userId)
         .child(Paths.categories_subcollection)
         .child(Category.favorite().id ?? "").set(Category.favorite().toJson());
-   await _firebaseDb.ref()
+   await _firebaseDb.reference()
         .child(Paths.categories_collection)
         .child(userId)
         .child(Paths.categories_subcollection)

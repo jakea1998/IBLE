@@ -16,8 +16,14 @@ class SettingsPage extends StatefulWidget {
   _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  final SlidableController slidableController = SlidableController();
+class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderStateMixin{
+  late SlidableController slidableController;
+  @override
+  void initState() {
+    // TODO: implement initState
+    slidableController =  SlidableController(this);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -27,11 +33,11 @@ class _SettingsPageState extends State<SettingsPage> {
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
       appBarColor: Colors.white,
       onWillOpen: () {
-        if (slidableController.activeState != null) {
+        /* f (slidableController.activeState != null) {
           slidableController.activeState?.close();
           return false;
         } else
-          return true;
+          return true; */
       },
       body: Container(
         color: Colors.white,

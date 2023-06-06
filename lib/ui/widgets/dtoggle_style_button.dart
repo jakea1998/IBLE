@@ -1,8 +1,6 @@
  import 'package:flutter/material.dart';
-import 'package:flutter_quill/models/documents/attribute.dart';
-import 'package:flutter_quill/models/documents/style.dart';
-import 'package:flutter_quill/widgets/controller.dart';
-import 'package:flutter_quill/widgets/toolbar.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+
 
 typedef ToggleStyleButtonBuilder = Widget Function(
   BuildContext context,

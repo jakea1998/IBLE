@@ -26,7 +26,7 @@ class BibleVersionModel {
 class Data {
   String? id;
   String? dblId;
-  Null relatedDbl;
+  String? relatedDbl;
   String? name;
   String? nameLocal;
   String? abbreviation;
@@ -54,17 +54,17 @@ class Data {
       this.type,
       this.updatedAt,
       this.audioBibles});
-
+  
   Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    dblId = json['dblId'];
-    relatedDbl = json['relatedDbl'];
-    name = json['name'];
-    nameLocal = json['nameLocal'];
-    abbreviation = json['abbreviation'];
-    abbreviationLocal = json['abbreviationLocal'];
-    description = json['description'];
-    descriptionLocal = json['descriptionLocal'];
+    id = json['id'] == null ? '' : json['id'].toString();
+    dblId = json['dblId'] == null ? '' : json['dblId'].toString();
+    relatedDbl = json['relatedDbl'] == null ? '' : json['relatedDbl'].toString();
+    name = json['name'] == null ? '' : json['name'].toString();
+    nameLocal = json['nameLocal'] == null ? '' : json['nameLocal'].toString();
+    abbreviation = json['abbreviation'] == null ? '' : json['abbreviation'].toString();
+    abbreviationLocal = json['abbreviationLocal'] == null ? '' : json['abbreviationLocal'].toString();
+    description = json['description'] == null ? '' : json['description'].toString();
+    descriptionLocal = json['descriptionLocal'] == null ? '' : json['descriptionLocal'].toString();
     language = json['language'] != null
         ? new Language.fromJson(json['language'])
         : null;
@@ -74,8 +74,8 @@ class Data {
         countries?.add(new Countries.fromJson(v));
       });
     }
-    type = json['type'];
-    updatedAt = json['updatedAt'];
+    type = json['type'] == null ? '' : json['type'].toString();
+    updatedAt = json['updatedAt'] == null ? '' : json['updatedAt'].toString();
     if (json['audioBibles'] != null) {
       audioBibles = [];
       json['audioBibles'].forEach((v) {
@@ -83,7 +83,7 @@ class Data {
       });
     }
   }
-
+  
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
@@ -113,10 +113,27 @@ class Data {
     return Data(
         abbreviation: '',
         dblId: '',
-        relatedDbl: null,
+        relatedDbl: '',
         name: '',
         nameLocal: '',
         id: '',
+        abbreviationLocal: '',
+        description: '',
+        descriptionLocal: '',
+        language: Language.empty(),
+        countries: [],
+        type: '',
+        updatedAt: '',
+        audioBibles: []);
+  }
+  factory Data.defaultVersion() {
+    return Data(
+        abbreviation: 'KJV',
+        dblId: '',
+        relatedDbl: '',
+        name: 'King James (Authorised) Version',
+        nameLocal: '',
+        id: 'de4e12af7f28f599-02',
         abbreviationLocal: '',
         description: '',
         descriptionLocal: '',
@@ -142,11 +159,13 @@ class Language {
         id: '', name: '', nameLocal: '', script: '', scriptDirection: '');
   }
   Language.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    nameLocal = json['nameLocal'];
-    script = json['script'];
-    scriptDirection = json['scriptDirection'];
+    id = json['id'] == null ? '' : json['id'].toString();
+    name = json['name'] == null ? '' : json['name'].toString();
+    nameLocal = json['nameLocal'] == null ? '' : json['nameLocal'].toString();
+    script = json['script'] == null ? '' : json['script'].toString();
+    scriptDirection = json['scriptDirection'] == null
+        ? ''
+        : json['scriptDirection'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -168,9 +187,9 @@ class Countries {
   Countries({this.id, this.name, this.nameLocal});
 
   Countries.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    nameLocal = json['nameLocal'];
+    id = json['id'] == null ? '' : json['id'].toString();
+    name = json['name'] == null ? '' : json['name'].toString();
+    nameLocal = json['nameLocal'] == null ? '' : json['nameLocal'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -191,10 +210,10 @@ class AudioBibles {
   AudioBibles({this.id, this.name, this.nameLocal, this.dblId});
 
   AudioBibles.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    nameLocal = json['nameLocal'];
-    dblId = json['dblId'];
+    id = json['id']  == null ? '' : json['id'].toString();
+    name = json['name'] == null ? '' : json['name'].toString();
+    nameLocal = json['nameLocal'] == null ? '' : json['nameLocal'].toString();
+    dblId = json['dblId'] == null ? '' : json['dblId'].toString();
   }
 
   Map<String, dynamic> toJson() {
