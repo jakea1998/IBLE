@@ -238,7 +238,7 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                       ),
                       VerseDisplay(),
                       divider,
-                      SaveButton(onPressed: () {
+                      SaveButton(onPressed: () async{
                         if (_formKey.currentState?.validate() ?? false) {
                           if (widget.isSubCategory &&
                               BlocProvider.of<CategoriesBloc>(context)
@@ -280,7 +280,7 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                                         "Type new category name"));
 
                             Navigator.pop(context);
-                            showNotificationDialog(context,
+                            await showNotificationDialog(context,
                                 "Saved to ${_categoryTextEditingController.text}");
                           }
                         }

@@ -110,7 +110,7 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
           appBar: SliderAppBar(
               appBarColor:
                   widget.appBarColor ?? Theme.of(context).backgroundColor,
-              appBarHeight: 120,
+              appBarHeight: 100,
               drawerIcon: GestureDetector(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16),

@@ -7,23 +7,23 @@ class Category {
   String? parent;
   String? title;
   String? description;
-  Passage? pinned;
-  bool? shaded;
-  List<NoteModel>? notes;
   DateTime? updated;
+  Passage? pinned;
+  List<NoteModel>? notes;
+
   List<Category>? subCategories;
   List<Passage>? verses;
-  Category(
-      {this.id,
-      this.parent,
-      this.title,
-      this.description,
-      this.pinned,
-      this.shaded,
-      this.notes,
-      this.subCategories,
-      this.verses,
-      this.updated});
+  Category({
+    this.id,
+    this.parent,
+    this.title,
+    this.description,
+    this.updated,
+    this.pinned,
+    this.notes,
+    this.subCategories,
+    this.verses,
+  });
   factory Category.favorite() {
     return Category(
       id: "2",
@@ -37,51 +37,80 @@ class Category {
     );
   }
   factory Category.fromJson(Map<dynamic, dynamic> json) {
+    final Map<dynamic, dynamic>? map = json['verses'] ;
+    List<Passage>? verses = [];
+    if(map!=null){
+      map.forEach((key, value) {
+       verses.add(Passage.fromJson( json['verses'][key] ));
+      });
+    }
+    final Map<dynamic, dynamic>? map2 = json['subCategories'] ;
+    List<Category>? subCategories = [];
+    if(map2!=null){
+      map2.forEach((key, value) {
+       subCategories.add(Category.fromJson( json['subCategories'][key] ));
+      });
+    }
+    final Map<dynamic, dynamic>? map3 = json['notes'] ;
+    List<NoteModel>? notes = [];
+    if(map3!=null){
+      map3.forEach((key, value) {
+       notes.add(NoteModel.fromJson( json:json['notes'][key] ));
+      });
+    }
     return Category(
         id: json['id'].toString(),
         parent: json['parent'].toString(),
-        title: json['title'],
-        description: json['description'],
-        pinned: Passage.fromJson(json['pinned']),
-        shaded: json['shaded'],
-        updated: json['updated'],
+        description: json['description'].toString(),
+        updated: json['updated'] != null
+            ? DateTime.parse(json['updated'].toString())
+            : null,
+        title: json['title'].toString(),
+        pinned:
+            json['pinned'] != null ? Passage.fromJson(json['pinned']) : null,
         subCategories: json["subCategories"] == null
             ? null
-            : List<Category>.from(
-                json["subCategories"].map((x) => Category.fromJson(x ?? {}))),
+            : subCategories,
         notes: json["notes"] == null
             ? null
-            : List<NoteModel>.from(
-                json["notes"].map((x) => NoteModel.fromJson(json: x))),
+            : notes,
         verses: json["verses"] == null
             ? null
-            : List<Passage>.from(
-                json["verses"].map((x) => Passage.fromJson(x ?? {}))));
+            : verses);
   }
   Map<dynamic, dynamic> toJson() {
     Map<dynamic, dynamic> verses1 = Map<dynamic, dynamic>();
-
+    Map<dynamic, dynamic> subCategories1 = Map<dynamic, dynamic>();
+    Map<dynamic, dynamic> notes1 = Map<dynamic, dynamic>();
     verses?.forEach((element) {
-      
-      verses1[element.id ?? Uuid().v1()] = element.toJson();
+      verses1[element.id?.replaceAll(".", " ") ?? Uuid().v1()] =
+          element.toJson();
     });
+    subCategories?.forEach((element) {
+      subCategories1[element.id?.replaceAll(".", " ") ?? Uuid().v1()] =
+          element.toJson();
+    });
+    notes?.forEach((element) {
+      notes1[element.id?.replaceAll(".", " ") ?? Uuid().v1()] =
+          element.toJson();
+    });
+
     final data = Map<dynamic, dynamic>();
     data['id'] = id;
     data['parent'] = parent;
     data['title'] = title;
+    data['updated'] = updated != null
+        ? updated?.toIso8601String()
+        : DateTime.now().toIso8601String();
+    data['pinned'] = pinned != null ? pinned?.toJson() : null;
     data['description'] = description;
-    data['pinned'] = pinned?.toJson();
-    data['shaded'] = shaded;
     data['verses'] = verses == null ? null : verses1;
-    data['subCategories'] = subCategories == null
-        ? null
-        : List<dynamic>.from(subCategories?.map((x) => x.toJson()) ?? []);
+    data['subCategories'] =  subCategories == null
+        ? null :
+        subCategories1 /* : List<dynamic>.from(subCategories?.map((x) => x.toJson()) ?? []) */;
     data['notes'] = notes == null
         ? null
-        : List<dynamic>.from(notes?.map((x) => x.toJson()) ?? []);
-    ;
-
-    data['updated'] = updated;
+        : notes1;
 
     return data;
   }

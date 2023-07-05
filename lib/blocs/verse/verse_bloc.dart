@@ -70,11 +70,7 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
               bibleVersion: event.bibleVersion,
               isNew: event.isNew,
               userId: _auth.currentUser?.uid ?? "");
-          emit(state.copyWith(
-            selectedCat: state.selectedCat,
-            verses: event.verses,
-            verseStatus: VerseStatus.loaded,
-          ));
+          print('saved');
         }
       } catch (e) {
         emit(state.copyWith(

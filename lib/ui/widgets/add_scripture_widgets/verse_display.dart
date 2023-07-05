@@ -23,7 +23,7 @@ class VerseDisplay extends StatelessWidget {
         child: BlocBuilder<VerseBloc, VerseState>(
           builder: (context, state) {
             print(state.verses?.length);
-            if (state.verseStatus == VerseStatus.no_matches_error) {
+            if (state.verseStatus == VerseStatus.no_matches_error || state.verses == null || (state.verses?.isEmpty ?? true)) {
               return NoMatches();
             } else
               return ListView.separated(

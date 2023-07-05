@@ -12,7 +12,7 @@ class CategoryRepo extends BaseCategoryRepo {
     // TODO: implement createCategory
     if (category.parent == "null" || category.parent == null)
       await _firebaseDb
-          .reference()
+          .ref()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)
@@ -20,7 +20,7 @@ class CategoryRepo extends BaseCategoryRepo {
           .set(category.toJson());
     else
       await _firebaseDb
-          .reference()
+          .ref()
           .child(Paths.categories_collection)
           .child(userId)
           .child(Paths.categories_subcollection)
@@ -36,21 +36,26 @@ class CategoryRepo extends BaseCategoryRepo {
   Stream<List<Category>> getAllCategories({required String userId}) {
     // TODO: implement getAllCategories
     return _firebaseDb
-        .reference()
+        .ref()
         .child(Paths.categories_collection)
         .child(userId)
         .child(Paths.categories_subcollection)
         .onValue
         .map((e) {
       List<Category>? categories = [];
-    
+
       if (e.snapshot.value != null) {
-        Map<dynamic, dynamic> map = e.snapshot.value as Map<dynamic,dynamic>;
+        Map<dynamic, dynamic> map = e.snapshot.value as Map<dynamic, dynamic>;
+        print('snap');
         map.forEach((key, value) {
-          categories.add(Category.fromJson(
-            value,
-            
-          ));
+          try{
+          final category = Category.fromJson(value);
+          categories.add(
+            category
+          );}
+          catch(e){
+            print(e);
+          }
         });
       }
       return categories;
@@ -62,17 +67,19 @@ class CategoryRepo extends BaseCategoryRepo {
     // TODO: implement initializeCategories
 
     await _firebaseDb
-        .reference().child(Paths.categories_collection)
-        .child(userId)
-        .child(Paths.categories_subcollection)
-        .child(Category.favorite().id ?? "").set(Category.favorite().toJson());
-   await _firebaseDb.reference()
+        .ref()
         .child(Paths.categories_collection)
         .child(userId)
         .child(Paths.categories_subcollection)
-        .child(Category.memory().id ?? "").set(Category.memory().toJson());
-  
-    
+        .child(Category.favorite().id ?? "")
+        .set(Category.favorite().toJson());
+    await _firebaseDb
+        .ref()
+        .child(Paths.categories_collection)
+        .child(userId)
+        .child(Paths.categories_subcollection)
+        .child(Category.memory().id ?? "")
+        .set(Category.memory().toJson());
   }
 
   @override

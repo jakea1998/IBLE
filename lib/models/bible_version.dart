@@ -5,7 +5,7 @@ class BibleVersionModel {
   factory BibleVersionModel.empty() {
     return BibleVersionModel(data: []);
   }
-  BibleVersionModel.fromJson(Map<String, dynamic> json) {
+  BibleVersionModel.fromJson(Map<dynamic, dynamic> json) {
     if (json['data'] != null) {
       data = [];
       json['data'].forEach((v) {
@@ -14,12 +14,12 @@ class BibleVersionModel {
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data?.map((v) => v.toJson()).toList();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data1 = new Map<String, dynamic>();
+    if (data != null) {
+      data1['data'] = data?.map((v) => v.toJson()).toList();
     }
-    return data;
+    return data1;
   }
 }
 
@@ -55,7 +55,7 @@ class Data {
       this.updatedAt,
       this.audioBibles});
   
-  Data.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'] == null ? '' : json['id'].toString();
     dblId = json['dblId'] == null ? '' : json['dblId'].toString();
     relatedDbl = json['relatedDbl'] == null ? '' : json['relatedDbl'].toString();
@@ -84,27 +84,27 @@ class Data {
     }
   }
   
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['dblId'] = this.dblId;
-    data['relatedDbl'] = this.relatedDbl;
-    data['name'] = this.name;
-    data['nameLocal'] = this.nameLocal;
-    data['abbreviation'] = this.abbreviation;
-    data['abbreviationLocal'] = this.abbreviationLocal;
-    data['description'] = this.description;
-    data['descriptionLocal'] = this.descriptionLocal;
-    if (this.language != null) {
-      data['language'] = this.language?.toJson();
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    data['id'] = id.toString();
+    data['dblId'] = dblId.toString();
+    data['relatedDbl'] = relatedDbl.toString();
+    data['name'] = name.toString();
+    data['nameLocal'] = nameLocal.toString();
+    data['abbreviation'] = abbreviation.toString();
+    data['abbreviationLocal'] = abbreviationLocal.toString();
+    data['description'] = description.toString();
+    data['descriptionLocal'] = descriptionLocal.toString();
+    if (language != null) {
+      data['language'] = language?.toJson();
     }
-    if (this.countries != null) {
-      data['countries'] = this.countries?.map((v) => v.toJson()).toList();
+    if (countries != null) {
+      data['countries'] = countries?.map((v) => v.toJson()).toList();
     }
-    data['type'] = this.type;
-    data['updatedAt'] = this.updatedAt;
-    if (this.audioBibles != null) {
-      data['audioBibles'] = this.audioBibles?.map((v) => v.toJson()).toList();
+    data['type'] = type.toString();
+    data['updatedAt'] = updatedAt.toString();
+    if (audioBibles != null) {
+      data['audioBibles'] = audioBibles?.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -129,18 +129,18 @@ class Data {
   factory Data.defaultVersion() {
     return Data(
         abbreviation: 'KJV',
-        dblId: '',
-        relatedDbl: '',
+        dblId: null,
+        relatedDbl: null,
         name: 'King James (Authorised) Version',
-        nameLocal: '',
+        nameLocal: null,
         id: 'de4e12af7f28f599-02',
-        abbreviationLocal: '',
-        description: '',
-        descriptionLocal: '',
+        abbreviationLocal: null,
+        description: null,
+        descriptionLocal: null,
         language: Language.empty(),
         countries: [],
-        type: '',
-        updatedAt: '',
+        type: null,
+        updatedAt: null,
         audioBibles: []);
   }
 }
@@ -156,25 +156,25 @@ class Language {
       {this.id, this.name, this.nameLocal, this.script, this.scriptDirection});
   factory Language.empty() {
     return Language(
-        id: '', name: '', nameLocal: '', script: '', scriptDirection: '');
+        id: null, name: null, nameLocal: null, script: null, scriptDirection: null);
   }
-  Language.fromJson(Map<String, dynamic> json) {
-    id = json['id'] == null ? '' : json['id'].toString();
-    name = json['name'] == null ? '' : json['name'].toString();
-    nameLocal = json['nameLocal'] == null ? '' : json['nameLocal'].toString();
-    script = json['script'] == null ? '' : json['script'].toString();
+  Language.fromJson(Map<dynamic, dynamic> json) {
+    id = json['id'] == null ? null : json['id'].toString();
+    name = json['name'] == null ? null : json['name'].toString();
+    nameLocal = json['nameLocal'] == null ? null : json['nameLocal'].toString();
+    script = json['script'] == null ? null : json['script'].toString();
     scriptDirection = json['scriptDirection'] == null
-        ? ''
+        ? null
         : json['scriptDirection'].toString();
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['nameLocal'] = this.nameLocal;
-    data['script'] = this.script;
-    data['scriptDirection'] = this.scriptDirection;
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    data['id'] = id.toString();
+    data['name'] = name.toString();
+    data['nameLocal'] = nameLocal.toString();
+    data['script'] = script.toString();
+    data['scriptDirection'] = scriptDirection.toString();
     return data;
   }
 }
@@ -186,17 +186,17 @@ class Countries {
 
   Countries({this.id, this.name, this.nameLocal});
 
-  Countries.fromJson(Map<String, dynamic> json) {
-    id = json['id'] == null ? '' : json['id'].toString();
-    name = json['name'] == null ? '' : json['name'].toString();
-    nameLocal = json['nameLocal'] == null ? '' : json['nameLocal'].toString();
+  Countries.fromJson(Map<dynamic, dynamic> json) {
+    id = json['id'] == null ? null : json['id'].toString();
+    name = json['name'] == null ? null : json['name'].toString();
+    nameLocal = json['nameLocal'] == null ? null : json['nameLocal'].toString();
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['nameLocal'] = this.nameLocal;
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    data['id'] = id.toString();
+    data['name'] = name.toString();
+    data['nameLocal'] = nameLocal.toString();
     return data;
   }
 }
@@ -209,19 +209,19 @@ class AudioBibles {
 
   AudioBibles({this.id, this.name, this.nameLocal, this.dblId});
 
-  AudioBibles.fromJson(Map<String, dynamic> json) {
+  AudioBibles.fromJson(Map<dynamic, dynamic> json) {
     id = json['id']  == null ? '' : json['id'].toString();
     name = json['name'] == null ? '' : json['name'].toString();
     nameLocal = json['nameLocal'] == null ? '' : json['nameLocal'].toString();
     dblId = json['dblId'] == null ? '' : json['dblId'].toString();
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['nameLocal'] = this.nameLocal;
-    data['dblId'] = this.dblId;
+  Map<dynamic, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    data['id'] = id.toString();
+    data['name'] = name.toString();
+    data['nameLocal'] = nameLocal.toString();
+    data['dblId'] = dblId.toString();
     return data;
   }
 }

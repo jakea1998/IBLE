@@ -35,8 +35,7 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage>
     with SingleTickerProviderStateMixin {
   Category? category;
- late SlidableController slidableController;
- 
+  late SlidableController slidableController;
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +44,17 @@ class _CategoryPageState extends State<CategoryPage>
       title: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-            (widget.category?.parent != "null" &&
-              widget.category?.parent != null) ?
-            Padding(
-              padding: EdgeInsets.only(right: 7, bottom: 12),
-              child: Container(
-                  height: 10,
-                  width: 10,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(5))),
-            ) : Container(),
+          (widget.category?.parent != "null" && widget.category?.parent != null)
+              ? Padding(
+                  padding: EdgeInsets.only(right: 7, bottom: 12),
+                  child: Container(
+                      height: 10,
+                      width: 10,
+                      decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(5))),
+                )
+              : Container(),
           Text(
             widget.category?.title ?? '',
             style: TextStyle(
@@ -98,114 +97,121 @@ class _CategoryPageState extends State<CategoryPage>
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             color: Colors.white,
-            child: (state.selectedCategory?.verses?.length ?? 0) > 0 ?ListView.separated(
-              itemCount: state.selectedCategory?.verses?.length ?? 0,
-              separatorBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(left: 16, top: 4, bottom: 4),
-                  height: 0.5,
-                  color: ThemeColors.greyB2B2B2,
-                );
-              },
-              itemBuilder: (context, index) {
-                print('index:$index');
-                final verse = BlocProvider.of<CategoriesBloc>(context)
-                    .state
-                    .selectedCategory
-                    ?.verses?[index];
-                final categoriesAndSubCategories =
-                    BlocProvider.of<CategoriesBloc>(context)
-                        .state
-                        .categoriesAndSubCategories
-                      ?..removeWhere((element) =>
+            child: (state.selectedCategory?.verses?.length ?? 0) > 0
+                ? ListView.separated(
+                  padding: EdgeInsets.zero,
+                    itemCount: state.selectedCategory?.verses?.length ?? 0,
+                    separatorBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.only(left: 16, top: 4, bottom: 4),
+                        height: 0.5,
+                        color: ThemeColors.greyB2B2B2,
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      print('index:$index');
+                      print('categories');
+                      final verse = BlocProvider.of<CategoriesBloc>(context)
+                          .state
+                          .selectedCategory
+                          ?.verses?[index];
+                      final categoriesAndSubCategories =
                           BlocProvider.of<CategoriesBloc>(context)
                               .state
-                              .selectedCategory
-                              ?.id
-                              .toString() ==
-                          element.id.toString());
-                List<Category> sharedCats = [];
-                List<Category> sharedSubCats = [];
-                categoriesAndSubCategories?.forEach((element) {
-                  element.verses?.forEach((element1) {
-                    if (element1.id.toString() == verse?.id.toString()) {
-                      if (element.parent.toString() == "null")
-                        sharedCats.add(element);
-                      else
-                        sharedSubCats.add(element);
-                    }
-                  });
-                });
-                return ScriptureWidget(
-                  index: index,
-                  slidableController: slidableController,
-                  sharedCats: sharedCats,
-                  sharedSubCats: sharedSubCats,
-                  onMoveTapped: () {
-                    final oldCategoryId =
-                        BlocProvider.of<CategoriesBloc>(context)
-                            .state
-                            .selectedCategory
-                            ?.id
-                            .toString();
-                    Category? newCategory;
-                    showPickCategoryDialog(
-                        context: context,
-                        memoryVerseTapped: () {
-                          if (BlocProvider.of<CategoriesBloc>(context)
-                                  .state
-                                  .memoryVersesCategory
-                                  ?.id
-                                  .toString() !=
-                              oldCategoryId.toString()) {
-                            newCategory =
+                              .categoriesAndSubCategories
+                            ?..removeWhere((element) =>
                                 BlocProvider.of<CategoriesBloc>(context)
                                     .state
-                                    .memoryVersesCategory;
-                          }
-                        },
-                        categories: state.categoriesAndSubCategories ?? [],
-                        newCatTapped: () {},
-                        showNewCat: false,
-                        favoriteVerseTapped: () {
-                          if (BlocProvider.of<CategoriesBloc>(context)
-                                  .state
-                                  .favoriteCategory
-                                  ?.id
-                                  .toString() !=
-                              oldCategoryId.toString()) {
-                            newCategory =
-                                BlocProvider.of<CategoriesBloc>(context)
-                                    .state
-                                    .favoriteCategory;
-                          }
-                        },
-                        catTapped: (cat) {
-                          if (cat.id.toString() != oldCategoryId.toString()) {
-                            newCategory = cat;
+                                    .selectedCategory
+                                    ?.id
+                                    .toString() ==
+                                element.id.toString());
+                      List<Category> sharedCats = [];
+                      List<Category> sharedSubCats = [];
+                      categoriesAndSubCategories?.forEach((element) {
+                        element.verses?.forEach((element1) {
+                          if (element1.id.toString() == verse?.id.toString()) {
+                            if (element.parent.toString() == "null")
+                              sharedCats.add(element);
+                            else
+                              sharedSubCats.add(element);
                           }
                         });
-                    if (newCategory != null) {
-                      BlocProvider.of<ScripturesBloc>(context).add(
-                          ScripturesEventMoveVerse(
-                              newCategory: newCategory!,
-                              oldCategory:
-                                  BlocProvider.of<CategoriesBloc>(context)
-                                      .state
-                                      .selectedCategory!,
-                              verse: BlocProvider.of<CategoriesBloc>(context)
+                      });
+                      return ScriptureWidget(
+                        index: index,
+                        slidableController: slidableController,
+                        sharedCats: sharedCats,
+                        sharedSubCats: sharedSubCats,
+                        onMoveTapped: () {
+                          final oldCategoryId =
+                              BlocProvider.of<CategoriesBloc>(context)
                                   .state
-                                  .selectedCategory!
-                                  .verses![index]));
-                      showNotificationDialog(
-                          context, "Moved to ${newCategory?.title}");
-                    }
-                  },
-                  selectedCategory:
-                      state.selectedCategory ?? Category.favorite(),
-                );
-              },
-            ) : NoScripturesSaved(),
+                                  .selectedCategory
+                                  ?.id
+                                  .toString();
+                          Category? newCategory;
+                          showPickCategoryDialog(
+                              context: context,
+                              memoryVerseTapped: () {
+                                if (BlocProvider.of<CategoriesBloc>(context)
+                                        .state
+                                        .memoryVersesCategory
+                                        ?.id
+                                        .toString() !=
+                                    oldCategoryId.toString()) {
+                                  newCategory =
+                                      BlocProvider.of<CategoriesBloc>(context)
+                                          .state
+                                          .memoryVersesCategory;
+                                }
+                              },
+                              categories:
+                                  state.categoriesAndSubCategories ?? [],
+                              newCatTapped: () {},
+                              showNewCat: false,
+                              favoriteVerseTapped: () {
+                                if (BlocProvider.of<CategoriesBloc>(context)
+                                        .state
+                                        .favoriteCategory
+                                        ?.id
+                                        .toString() !=
+                                    oldCategoryId.toString()) {
+                                  newCategory =
+                                      BlocProvider.of<CategoriesBloc>(context)
+                                          .state
+                                          .favoriteCategory;
+                                }
+                              },
+                              catTapped: (cat) {
+                                if (cat.id.toString() !=
+                                    oldCategoryId.toString()) {
+                                  newCategory = cat;
+                                }
+                              });
+                          if (newCategory != null) {
+                            BlocProvider.of<ScripturesBloc>(context).add(
+                                ScripturesEventMoveVerse(
+                                    newCategory: newCategory!,
+                                    oldCategory:
+                                        BlocProvider.of<CategoriesBloc>(context)
+                                            .state
+                                            .selectedCategory!,
+                                    verse:
+                                        BlocProvider.of<CategoriesBloc>(context)
+                                            .state
+                                            .selectedCategory!
+                                            .verses![index]));
+                            showNotificationDialog(
+                                context, "Moved to ${newCategory?.title}");
+                          }
+                        },
+                        selectedCategory:
+                            state.selectedCategory ?? Category.favorite(),
+                      );
+                    },
+                  )
+                : NoScripturesSaved(),
           );
         },
       ),
@@ -215,7 +221,8 @@ class _CategoryPageState extends State<CategoryPage>
           FloatingActionButton(
             elevation: 0,
             backgroundColor: ThemeColors.greyA7B0B3,
-            onPressed: () {
+            onPressed: ()async {
+              
               Navigator.push(
                 context,
                 SlideFromBottomPageRoute(

@@ -16,12 +16,17 @@ class LanguageRepo extends BaseLanguageRepo {
   }
 
   @override
-  Future<void> saveLanguage({required Language language,required String userId}) async{
+  Future<void> saveLanguage(
+      {required Language language, required String userId}) async {
     // TODO: implement saveLanguage
-   await _firebaseFirestore
+    Map<String, dynamic> data = Map<String, dynamic>();
+    for (var item in language.toJson().keys) {
+      data[item.toString()] = language.toJson()[item];
+    }
+    await _firebaseFirestore
         .collection(Paths.language_collection)
         .doc(userId)
-        .set(language.toJson(),SetOptions(merge: true));
+        .set(data, SetOptions(merge: true));
   }
 
   @override
@@ -31,7 +36,7 @@ class LanguageRepo extends BaseLanguageRepo {
     bibleVersionModel.data?.forEach((element) {
       languages.add(element.language?.name ?? '');
     });
-    
+
     return languages;
   }
 

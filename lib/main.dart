@@ -21,7 +21,8 @@ import 'package:ible/ui/pages/home_page.dart';
 import 'package:provider/provider.dart';
 
 import 'models/category_model.dart';
-
+final GlobalKey<NavigatorState> navigatorKey =
+      new GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -98,6 +99,7 @@ class MyApp extends State<App> {
             create: (context) => BibleVersionBloc()
               ..add(BibleVersionFetchSavedBibleVersion())
               ..add(BibleVersionEventFetchAllBibleVersions())),
+        BlocProvider<NotesBloc>(create: (context)=>NotesBloc(),),
         BlocProvider<CategoriesBloc>(
           lazy: false,
           create: (context) =>
@@ -108,6 +110,7 @@ class MyApp extends State<App> {
         create: (_) => IbDrawerController(),
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
+            navigatorKey: navigatorKey,
             title: 'IBLE',
             home: FutureBuilder<Widget>(
               future: getHomeScreen(context),

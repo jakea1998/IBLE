@@ -54,10 +54,14 @@ class VersionRepo extends BaseVersionRepo {
   Future<void> saveBibleVersion(
       {required String userId, required Data savedVersion}) async {
     // TODO: implement saveBibleVersion
+     Map<String, dynamic> data = Map<String, dynamic>();
+    for (var item in savedVersion.toJson().keys) {
+      data[item.toString()] = savedVersion.toJson()[item];
+    }
     await _firebaseFirestore
         .collection(Paths.version_collection)
         .doc(userId)
-        .set(savedVersion.toJson(), SetOptions(merge: true));
+        .set(data, SetOptions(merge: true));
   }
 }
 

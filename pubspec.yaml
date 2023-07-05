@@ -36,7 +36,7 @@ dependencies:
   hydrated_bloc: any
   http: ^0.13.3 #
   equatable: ^2.0.3 #
-  flutter_quill: ^7.1.19
+  flutter_quill: ^7.1.20
   flutter_slidable: ^3.0.0
   path_provider: ^2.0.2 #
   

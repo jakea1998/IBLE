@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:ible/main.dart';
 import 'package:ible/theme.dart';
 
 // class DNotificationDialog extends StatelessWidget {
@@ -40,14 +41,14 @@ import 'package:ible/theme.dart';
 
 Future<void> showNotificationDialog(context, String? content) async {
   print('Notification dialog: $content');
-  Timer timer = Timer(Duration(seconds: 2, milliseconds: 500), () {
-    Navigator.pop(context);
+  Future.delayed(Duration(seconds: 1), () {
+    navigatorKey.currentState?.pop();
   });
   return await showGeneralDialog(
     barrierLabel: "Label",
     barrierDismissible: true,
     barrierColor: Colors.black.withOpacity(0.4),
-    transitionDuration: Duration(milliseconds: 350),
+    transitionDuration: Duration(milliseconds: 250),
     context: context,
     pageBuilder: (context, anim1, anim2) {
       return Align(
@@ -88,9 +89,6 @@ Future<void> showNotificationDialog(context, String? content) async {
       );
     },
   ).then((value) {
-    if (timer.isActive) {
-      timer.cancel();
-    }
     return value;
   });
 }
@@ -128,7 +126,6 @@ Future<void> showDialogFromBottom(context, {required Widget child}) async {
     return value;
   });
 }
-
 
 Future showPersistentDialogFromBottom(context, {required Widget child}) async {
   print('Yoh');

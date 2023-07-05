@@ -52,8 +52,9 @@ class VerseRepo extends BaseVerseRepo {
       final verses = json1['data']['passages'];
       print(verses);
       List<Passage> mapped = [];
-      try{
-      mapped = verses.map<Passage>((e) => Passage.fromJson(e)).toList();}catch(e){
+      try {
+        mapped = verses.map<Passage>((e) => Passage.fromJson(e)).toList();
+      } catch (e) {
         print(e);
       }
 
@@ -90,14 +91,18 @@ class VerseRepo extends BaseVerseRepo {
     if (category.parent == "null" || category.parent == null) {
       print('save2');
       print(category.id);
+      print(userId.toString());
       print(category.toJson());
-      await _firebaseDb
+      try{
+       await _firebaseDb
           .ref()
           .child(Paths.categories_collection)
-          .child(userId)
+          .child(userId.toString())
           .child(Paths.categories_subcollection)
           .child(category.id.toString())
-          .set(category.toJson());
+          .set(category.toJson()); }on FirebaseException catch(e){
+            print(e.message);
+          }
     } else {
       await _firebaseDb
           .ref()

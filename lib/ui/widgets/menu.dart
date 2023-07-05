@@ -14,11 +14,13 @@ import 'package:ible/models/note_model.dart';
 import 'package:ible/ui/pages/add_scripture_page.dart';
 import 'package:ible/ui/pages/add_scripture_page_new.dart';
 import 'package:ible/ui/pages/category_page.dart';
+import 'package:ible/ui/pages/notes_page.dart';
 import 'package:ible/ui/pages/settings_page.dart';
 import 'package:ible/ui/pages/sign_in.dart';
 import 'package:ible/ui/widgets/custom_tree_view.dart';
 import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
 import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
+import 'package:ible/utils/cat_long_press.dart';
 import 'package:ible/utils/delete_cat.dart';
 import 'package:ible/utils/rename_cat.dart';
 import 'package:provider/provider.dart';
@@ -237,7 +239,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                             }
                                           } */
 
-
+                                          state.categories?.removeWhere((element) => element.id == 1.toString() || element.id == 2.toString());
                                           return ListView.builder(
                                             // padding: EdgeInsets.zero,
                                             itemCount: state.categories?.length,
@@ -516,11 +518,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   buildListTitle(BuildContext context, int index,
       IbDrawerController drawerController, Category category) {
     //final expandedCategory = "-1";
-    print('length of children 8');
-    print(category.subCategories?.length);
+    
     final hasChildren = 0 < (category.subCategories?.length ?? 0);
     final hasNote = category.notes?.isNotEmpty ?? false;
-    print(hasNote);
+    
     final showTrailing = hasChildren || hasNote;
     bool isOpen = this.expandedCategory == category.id;
     if (hasChildren) {
@@ -563,7 +564,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               ),
             );
           },
-          onLongPress: () => _onCategoryLongPress(context, category, true),
+          onLongPress: () => onCategoryLongPress(context, category, true),
         ),
         if (isOpen && hasChildren)
           Padding(
@@ -603,19 +604,19 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                         },
                         //todo: Work on this logic
                         onLongPress: () =>
-                            _onCategoryLongPress(context, subCategory, false),
+                            onCategoryLongPress(context, subCategory, false),
                       ),
                       if (subCategory.notes?.isNotEmpty ?? false)
                         InkWell(
                           onTap: () async {
-                            //TODO: CLOSE THE DRAWER HERE.
-                            /* Navigator.push(
+                           
+                            Navigator.push(
                                   context,
                                   SlideFromRightPageRoute(
-                                      widget: CategoryNotePage(
+                                      widget:CategoryNotePage(
                                     category: subCategory,
                                   )),
-                                ); */
+                                ); 
                           },
                           child: Row(
                             children: [
@@ -948,282 +949,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     );
   }
 
-  _onCategoryLongPress(BuildContext context, Category category, bool showSub) {
-    HapticFeedback.mediumImpact();
-
-    showDialogFromNowhere(context,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 16, right: 68),
-              decoration: BoxDecoration(
-                color: ThemeColors.grey414747,
-                borderRadius: BorderRadius.circular(13),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            '${category.title}',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  LayoutBuilder(builder: (context, size) {
-                    /* if (hasTextOverflow(
-                      '${category.title}',
-                      TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                      maxWidth: size.maxWidth,
-                    )) */
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16.0,
-                        right: 16.0,
-                        bottom: 16.0,
-                      ),
-                      child: Text(
-                        '${category.title}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                    );
-                    return Container();
-                  })
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                left: 16,
-                top: 16,
-                right: 96.0,
-                bottom: 0,
-              ),
-              decoration: BoxDecoration(
-                  color: ThemeColors.actionBackgroundColor,
-                  borderRadius: BorderRadius.circular(13)),
-              child: Column(
-                // title: Text(category.title),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15.0, horizontal: 24.0),
-                    child: Text(
-                      '${category.title}',
-                      style: TextStyle(
-                        color: ThemeColors.grey9B9B9B,
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Divider(
-                    color: ThemeColors.grey9B9B9B,
-                    height: 0,
-                  ),
-                  CupertinoActionSheetAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      renameCategory(context, category);
-                      // openEditCategoryDialog(context, category);
-                      // thing(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0, right: 24),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Rename Cat...',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Spacer(),
-                          ImageIcon(
-                            AssetImage(
-                              'assets/images/icons/noun_iPad Pro 10 with Apple pencil_1377606.png',
-                            ),
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    color: ThemeColors.grey9B9B9B,
-                    height: 0,
-                  ),
-                  CupertinoActionSheetAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddScripturePageNew(
-                              isSubCategory: false,
-                              category: category,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 24),
-                        child: Row(
-                          children: [
-                            Text('Add Verse'),
-                            Spacer(),
-                            Image.asset(
-                              'assets/images/icons/fi_plus-circle.png',
-                              width: 24,
-                              height: 24,
-                            ),
-                          ],
-                        ),
-                      )),
-                  Divider(
-                    color: ThemeColors.grey9B9B9B,
-                    height: 0,
-                  ),
-                  CupertinoActionSheetAction(
-                      onPressed: () {
-                        final newNote = NoteModel(
-                            id: Uuid().v1(),
-                            parentId:
-                                category.parent.toString() == "null" ? category.id : null,
-                            subParentId:
-                                category.parent.toString() != "null" ? category.id : null,
-                            createdAt: DateTime.now(),
-                            title: "Note 1");
-                        BlocProvider.of<NotesBloc>(context)
-                            .add(NotesEventSaveNote(note: newNote));
-                        Navigator.pop(context);
-                        /* Navigator.push(
-                          context,
-                          SlideFromRightPageRoute(
-                              widget: CategoryNotePage(
-                            category: category,
-                          )),
-                        ); */
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 24),
-                        child: Row(
-                          children: [
-                            Text('Add Note'),
-                            Spacer(),
-                            ImageIcon(
-                              AssetImage('assets/images/icons/fi_file.png'),
-                              color: Colors.black,
-                            )
-                          ],
-                        ),
-                      )),
-                  if (showSub)
-                    Divider(
-                      color: ThemeColors.grey9B9B9B,
-                      height: 0,
-                    ),
-                  if (showSub)
-                    CupertinoActionSheetAction(
-                        onPressed: () {
-                          final newCategory = Category(
-                             
-                              id: Uuid().v1(),
-                              parent: category.id,
-                              title: "Sub cat");
-                          BlocProvider.of<CategoriesBloc>(context).add(
-                              CategoriesEventAddCategory(
-                                  category: newCategory));
-                          Navigator.pop(context);
-
-                          /*  Navigator.push(
-                            context,
-                            SlideFromRightPageRoute(
-                                widget: AddScriptureToSubCategoryPage(
-                              parent: category,
-                            )),
-                          ); */
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0, right: 24),
-                          child: Row(
-                            children: [
-                              Text('Add Subcat...'),
-                              Spacer(),
-                              ImageIcon(
-                                AssetImage(
-                                    'assets/images/icons/subcategory.png'),
-                                color: Colors.black,
-                              )
-                            ],
-                          ),
-                        )),
-                  Divider(
-                    color: ThemeColors.grey9B9B9B,
-                    height: 0,
-                  ),
-                  CupertinoActionSheetAction(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                     if (await (deleteCategoryDialog(context, category))) {
-                         Provider.of<IbDrawerController>(context, listen: false)
-                            .select("2"); 
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CategoryPage(
-                              category: Category(
-                                id: "2",
-                                title: 'Favorite',
-                              ),
-                            ),
-                          ),
-                        );
-                      } 
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0, right: 24),
-                      child: Row(
-                        children: [
-                          Text('Delete Cat...'),
-                          Spacer(),
-                          Image.asset(
-                            'assets/images/icons/fi_trash-2.png',
-                            width: 24,
-                            height: 24,
-                          ),
-                        ],
-                      ),
-                    ),
-                    isDestructiveAction: true,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ));
-
-    return;
-  }
+  
 
   _toggleExpanded(Category category) {
     setState(() {
