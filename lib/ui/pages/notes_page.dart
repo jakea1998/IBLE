@@ -15,21 +15,20 @@ import 'package:ible/ui/pages/category_page.dart';
 import 'package:ible/ui/widgets/dcupertino_overflow_menu.widget.dart';
 import 'package:ible/ui/widgets/dtoggle_style_button.dart';
 import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
+import 'package:ible/ui/widgets/sliding_scaffold_new.dart';
 
-import 'package:provider/provider.dart';
-
-class CategoryNotePage extends StatefulWidget {
-  final Category? category;
+class NotePage extends StatefulWidget {
+  final NoteModel? note;
   final List<Scripture>? scriptures;
 
-  const CategoryNotePage({Key? key, this.category, this.scriptures = const []})
+  const NotePage({Key? key, this.note, this.scriptures = const []})
       : super(key: key);
 
   @override
   _NotePageState createState() => _NotePageState();
 }
 
-class _NotePageState extends State<CategoryNotePage> {
+class _NotePageState extends State<NotePage> {
   final _noteTitleEditorController = TextEditingController();
 
   /// Show or hide the editor toolbar
@@ -46,8 +45,8 @@ class _NotePageState extends State<CategoryNotePage> {
   @override
   void initState() {
     super.initState();
-    String text = widget.category!.notes?[0].description ?? '';
-    _noteTitleEditorController.text = widget.category!.notes?[0].title ?? "";
+    String text = widget.note?.description ?? '';
+    _noteTitleEditorController.text = widget.note?.title ?? "";
     if (text.trim().isNotEmpty) {
       var myJSON = jsonDecode(text);
       final doc = quill.Document.fromJson(myJSON);
@@ -73,14 +72,14 @@ class _NotePageState extends State<CategoryNotePage> {
           document: doc, selection: TextSelection.collapsed(offset: 0));
     }
     _noteTitleEditorController.addListener(() {
-      NoteModel note = widget.category?.notes?[0] ?? NoteModel();
+      NoteModel note = widget.note ?? NoteModel();
 
       note.title = _noteTitleEditorController.text;
 
       // BlocProvider.of<NotesBloc>(context).add(NotesEventSaveNote(note: note));
     });
     _controller.changes.listen((event) {
-      NoteModel note = widget.category?.notes?[0] ?? NoteModel();
+      NoteModel note = widget.note ?? NoteModel();
 
       note.description = jsonEncode(_controller.document.toDelta().toJson());
 
@@ -90,7 +89,7 @@ class _NotePageState extends State<CategoryNotePage> {
     });
 
     // TODO: Add this logic
-    var title = widget.category!.notes?[0].title ?? '';
+    var title = widget.note?.title ?? '';
     _noteTitleEditorController.text = title;
 
     ///Because the node won't update setState() automatically
@@ -110,12 +109,12 @@ class _NotePageState extends State<CategoryNotePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        var category = widget.category!;
+       /*  var category = widget.category!;
         category.description = jsonEncode(
           _controller.document.toDelta().toJson(),
-        );
-        category.updated = DateTime.now();
-        NoteModel note = widget.category?.notes?[0] ?? NoteModel();
+        ); */
+        //category.updated = DateTime.now();
+        NoteModel note = widget.note ?? NoteModel();
 
         note.description = jsonEncode(_controller.document.toDelta().toJson());
         note.title = _noteTitleEditorController.text;
@@ -139,154 +138,115 @@ class _NotePageState extends State<CategoryNotePage> {
         Navigator.pop(context, true);
         return false;
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            onPressed: () async {
-              Navigator.of(context).maybePop();
-              // var category = widget.category;
-              // category.description = _textEditorController.text;
-              // showDialog(
-              //   context: context,
-              //     builder: (context) => Dialog(
-              //     child: Center(
-              //       child: CupertinoActivityIndicator(),
-              //     ),
-              //   ),
-              // );
-              // category = await controller.update(category);
-              //
-              // Navigator.pushReplacement(
-              //     context,
-              //     SlideFromRightPageRoute(
-              //         widget: CategoryPage(
-              //       category: category,
-              //     )));
-            },
-            icon: Image.asset(
-              'assets/images/icons/arrow_left.png',
-              height: 25,
-              fit: BoxFit.fitHeight,
-              color: ThemeColors.appBarIconColor,
-            ),
-          ),
-          title: Text(
-            'Note',
-            style: AppStyles.titleStyle(context),
-          ),
-          elevation: 0,
-          iconTheme: Theme.of(context).iconTheme.copyWith(),
-          actions: [
-            DCupertinoOverflowMenu(
-              children: [
-                // CupertinoActionSheetAction(
-                //   onPressed: () async {
-                //     Navigator.pop(context);
-                //     var category = widget.category;
-                //     category.description = _textEditorController.text;
-                //     showDialog(
-                //       context: context,
-                //       child: Dialog(
-                //         child: Center(
-                //           child: CupertinoActivityIndicator(),
-                //         ),
-                //       ),
-                //     );
-                //     category = await controller.update(category);
-                //     Navigator.pop(context);
-                //     Navigator.push(
-                //         context,
-                //         SlideFromRightPageRoute(
-                //             widget: CategoryPage(
-                //           category: category,
-                //         )));
-                //   },
-                //   child: Text('Save'),
-                // ),
-                CupertinoActionSheetAction(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    Clipboard.setData(
-                      ClipboardData(text: widget.category!.description ?? ""),
-                    );
-                  },
-                  child: Text('Copy Note'),
-                ),
-                CupertinoActionSheetAction(
-                  isDestructiveAction: true,
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    final delete = await showCupertinoModalPopup(
-                      context: context,
-                      builder: (context) {
-                        return CupertinoActionSheet(
-                          title: Container(
-                            child: Text(
-                              'Delete Note?',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                    color: ThemeColors.grey808082,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ),
-                          message: Container(
-                            child: Text(
-                              'Deleting this note will remove it from this category permanently.',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                    color: ThemeColors.grey808082,
-                                  ),
-                            ),
-                          ),
-                          actions: [
-                            CupertinoActionSheetAction(
-                              onPressed: () async {
-                                var category = widget.category!;
-                                category.description = null;
-                                
-                                BlocProvider.of<NotesBloc>(context).add(
-                                    NotesEventDeleteNote(
-                                        note: widget.category?.notes?[0] ??
-                                            NoteModel.empty()));
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  SlideFromRightPageRoute(
-                                      widget: CategoryPage(
-                                    message: 'Note deleted',
-                                    category: category,
-                                  )),
-                                );
-                              },
-                              child: Text('OK'),
-                              isDestructiveAction: true,
-                            ),
-                          ],
-                          cancelButton: CupertinoActionSheetAction(
-                            child: Text('Cancel'),
-                            onPressed: () => Navigator.pop(context, false),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Text('Delete Note'),
-                ),
-              ],
-            ),
-            IconButton(
-                icon: ImageIcon(AssetImage('assets/images/icons/share.png')),
-                onPressed: () {})
-          ],
+    
+      child: SlidingScaffold(
+        appBarColor: Colors.white,
+        title: Text(
+          'Note',
+          style: AppStyles.titleStyle(context),
         ),
+        actions: [
+          DCupertinoOverflowMenu(
+            children: [
+              // CupertinoActionSheetAction(
+              //   onPressed: () async {
+              //     Navigator.pop(context);
+              //     var category = widget.category;
+              //     category.description = _textEditorController.text;
+              //     showDialog(
+              //       context: context,
+              //       child: Dialog(
+              //         child: Center(
+              //           child: CupertinoActivityIndicator(),
+              //         ),
+              //       ),
+              //     );
+              //     category = await controller.update(category);
+              //     Navigator.pop(context);
+              //     Navigator.push(
+              //         context,
+              //         SlideFromRightPageRoute(
+              //             widget: CategoryPage(
+              //           category: category,
+              //         )));
+              //   },
+              //   child: Text('Save'),
+              // ),
+              CupertinoActionSheetAction(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  Clipboard.setData(
+                    ClipboardData(text:  ""),
+                  );
+                },
+                child: Text('Copy Note'),
+              ),
+              CupertinoActionSheetAction(
+                isDestructiveAction: true,
+                onPressed: () async {
+                  Navigator.pop(context);
+                  final delete = await showCupertinoModalPopup(
+                    context: context,
+                    builder: (context) {
+                      return CupertinoActionSheet(
+                        title: Container(
+                          child: Text(
+                            'Delete Note?',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      color: ThemeColors.grey808082,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          ),
+                        ),
+                        message: Container(
+                          child: Text(
+                            'Deleting this note will remove it from this category permanently.',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      color: ThemeColors.grey808082,
+                                    ),
+                          ),
+                        ),
+                        actions: [
+                          CupertinoActionSheetAction(
+                            onPressed: () async {
+                              
+
+                              BlocProvider.of<NotesBloc>(context).add(
+                                  NotesEventDeleteNote(
+                                      note: widget.note ??
+                                          NoteModel.empty()));
+                            /*   Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                SlideFromRightPageRoute(
+                                    widget: CategoryPage(
+                                  message: 'Note deleted',
+                                  category: category,
+                                )),
+                              ); */
+                            },
+                            child: Text('OK'),
+                            isDestructiveAction: true,
+                          ),
+                        ],
+                        cancelButton: CupertinoActionSheetAction(
+                          child: Text('Cancel'),
+                          onPressed: () => Navigator.pop(context, false),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Text('Delete Note'),
+              ),
+            ],
+          ),
+          IconButton(
+              icon: ImageIcon(AssetImage('assets/images/icons/share.png')),
+              onPressed: () {})
+        ],
         body: Column(
           children: [
             Expanded(
@@ -300,7 +260,7 @@ class _NotePageState extends State<CategoryNotePage> {
                         padding: const EdgeInsets.only(
                             right: 16.0, left: 16, top: 16),
                         child: Text(
-                          widget.category!.title ?? '',
+                          "",
                           style: Theme.of(context).textTheme.caption!.copyWith(
                               fontSize: 26, color: ThemeColors.grey414747),
                         ),

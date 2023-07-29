@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ible/blocs/repos/verse_repo.dart';
+import 'package:ible/blocs/selected_item/selected_item_bloc.dart';
 import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/passage_model.dart';
@@ -14,8 +15,9 @@ part 'scriptures_state.dart';
 class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
   final _repo = VerseRepo();
   final _auth = FirebaseAuth.instance;
+  final SelectedItemBloc selectedItemBloc;
   StreamSubscription<List<Passage>>? _stream1;
-  ScripturesBloc() : super(ScripturesState.initial()) {
+  ScripturesBloc({required this.selectedItemBloc}) : super(ScripturesState.initial()) {
     /* on<ScripturesEventLoadScriptures>((event, emit) {
       // TODO: implement event handler
       final _auth = FirebaseAuth.instance;
@@ -39,7 +41,7 @@ class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
           allScriptures: event.scriptures,
           displayedScriptures: scriptures));
     }); */
-    on<ScripturesEventSelectCategory>((event, emit) {
+    /* on<ScripturesEventSelectCategory>((event, emit) {
       // TODO: implement event handler
       emit(state.copyWith(status: ScripturesStatus.loading));
       final scriptures = state.allScriptures
@@ -50,9 +52,9 @@ class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
       print(scriptures.length);
       emit(state.copyWith(
           status: ScripturesStatus.loaded,
-          selectedCategory: event.category,
+          selectedCategory: selectedItemBloc.state.selectedItem as Category,
           displayedScriptures: scriptures));
-    });
+    }); */
     on<ScripturesEventMoveVerse>((event, emit) async {
       try {
         await _repo.deleteVerse(

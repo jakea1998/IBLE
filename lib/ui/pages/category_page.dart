@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ible/blocs/bible_version/bible_version_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
-import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
+
 import 'package:ible/models/bible_version.dart';
 
 import 'package:ible/models/category_model.dart';
@@ -21,6 +21,8 @@ import 'package:ible/ui/widgets/scripture_widget.dart';
 import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
 import 'package:ible/ui/widgets/sliding_scaffold_new.dart';
 import 'package:ible/utils/pick_cat_dialog.dart';
+
+import '../../blocs/scriptures/scriptures_bloc.dart';
 
 class CategoryPage extends StatefulWidget {
   final Category? category;
@@ -196,7 +198,7 @@ class _CategoryPageState extends State<CategoryPage>
                                     oldCategory:
                                         BlocProvider.of<CategoriesBloc>(context)
                                             .state
-                                            .selectedCategory!,
+                                            .selectedCategory ?? Category(),
                                     verse:
                                         BlocProvider.of<CategoriesBloc>(context)
                                             .state

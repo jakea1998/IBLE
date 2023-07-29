@@ -9,8 +9,8 @@ abstract class SelectedItemEvent extends Equatable {
 
 class SelectedItemEventSelectItem extends SelectedItemEvent{
   final dynamic item;
-  final SelectedItemType itemType;
-  SelectedItemEventSelectItem({required this.item,required this.itemType});
+  
+  SelectedItemEventSelectItem({required this.item});
   @override
-  List<Object> get props => [item,itemType];
+  List<Object> get props => [item];
 }

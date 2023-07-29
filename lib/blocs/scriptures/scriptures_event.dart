@@ -27,13 +27,13 @@ class ScripturesEventMoveVerse extends ScripturesEvent {
   List<Object> get props => [verse,oldCategory,newCategory];
 }
 
-class ScripturesEventSelectCategory extends ScripturesEvent {
+/* class ScripturesEventSelectCategory extends ScripturesEvent {
   final Category category;
   const ScripturesEventSelectCategory({required this.category});
 
   @override
   List<Object> get props => [category];
-}
+} */
 
 class ScripturesEventDeleteVerse extends ScripturesEvent {
   final Category category;

@@ -60,8 +60,7 @@ class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
           if (event.id == null || event.id == "") {
             bibleData = Data.defaultVersion();
           }
-          print('id');
-          print(bibleData.id.toString());
+         
           add(BibleVersionUpdateBibleVersion(data: bibleData));
         });
       } on Exception catch (e) {

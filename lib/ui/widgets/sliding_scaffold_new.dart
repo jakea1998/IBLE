@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:ible/theme.dart';
 import 'package:ible/ui/widgets/menu.dart';
@@ -111,18 +109,37 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
               appBarColor:
                   widget.appBarColor ?? Theme.of(context).backgroundColor,
               appBarHeight: 100,
-              drawerIcon: GestureDetector(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: ImageIcon(
-                    AssetImage('assets/images/icons/menu.png'),
-                    color: ThemeColors.appBarIconColor,
-                    size: Theme.of(context).iconTheme.size,
+              drawerIcon: Stack(
+                children: [
+                  
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: ImageIcon(
+                        AssetImage('assets/images/icons/menu.png'),
+                        color: ThemeColors.appBarIconColor,
+                        size: Theme.of(context).iconTheme.size,
+                      ),
+                    ),
                   ),
-                ),
-                onTap: () {
-                  _key.currentState!.toggle();
-                },
+                  Center(
+                    child: GestureDetector(
+                      onTap:(){
+                        if (_key.currentState?.isDrawerOpen ?? false) {
+                          _key.currentState?.closeSlider();
+                        } else {
+                          _key.currentState?.openSlider();
+                        }
+                      },
+                      
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        color: Colors.transparent,
+                      ),
+                    ),
+                  )
+                ],
               ),
               drawerIconSize: 90,
               trailing:

@@ -1,13 +1,17 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import 'package:ible/blocs/bible_version/bible_version_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/blocs/notes/notes_bloc.dart';
 import 'package:ible/blocs/save_verses/save_verse_bloc.dart';
 import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
+import 'package:ible/blocs/selected_item/selected_item_bloc.dart';
 import 'package:ible/blocs/verse/verse_bloc.dart';
+import 'package:ible/models/note_model.dart';
+import 'package:ible/ui/pages/notes_page.dart';
 import 'package:ible/ui/widgets/menu.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,12 +25,13 @@ import 'package:ible/ui/pages/home_page.dart';
 import 'package:provider/provider.dart';
 
 import 'models/category_model.dart';
-final GlobalKey<NavigatorState> navigatorKey =
-      new GlobalKey<NavigatorState>();
+
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
+  HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: await getApplicationDocumentsDirectory());
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   runApp(App());
 }
@@ -62,8 +67,7 @@ class MyApp extends State<App> {
           ..add(CategoriesEventSelectCategory(
             category: BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
           ));  */
-        return IbleSplashPage(
-            );
+        return IbleSplashPage();
       } else {
         print('signed in');
         /*   BlocProvider.of<CategoriesBloc>(context)
@@ -71,8 +75,8 @@ class MyApp extends State<App> {
             category:  BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
           ));  */
         return IbleSplashPage(
-           /* BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ??  */
-               );
+            /* BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ??  */
+            );
       }
     } catch (e) {
       print(e);
@@ -82,14 +86,17 @@ class MyApp extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    
+    final selectedBloc = SelectedItemBloc();
     return MultiBlocProvider(
       providers: [
+        BlocProvider<SelectedItemBloc>(
+          create: (context) => selectedBloc,
+        ),
         BlocProvider<SaveVerseBloc>(
           create: (context) => SaveVerseBloc(),
         ),
         BlocProvider<ScripturesBloc>(
-          create: (context) => ScripturesBloc(),
+          create: (context) => ScripturesBloc(selectedItemBloc: selectedBloc),
         ),
         BlocProvider<VerseBloc>(
           create: (context) => VerseBloc(),
@@ -99,35 +106,33 @@ class MyApp extends State<App> {
             create: (context) => BibleVersionBloc()
               ..add(BibleVersionFetchSavedBibleVersion())
               ..add(BibleVersionEventFetchAllBibleVersions())),
-        BlocProvider<NotesBloc>(create: (context)=>NotesBloc(),),
+        BlocProvider<NotesBloc>(
+          create: (context) => NotesBloc(),
+        ),
         BlocProvider<CategoriesBloc>(
           lazy: false,
-          create: (context) =>
-              CategoriesBloc()..add(CategoriesEventLoadCategories()),
+          create: (context) => CategoriesBloc(selectedItemBloc: selectedBloc)
+            ..add(CategoriesEventLoadCategories()),
         ),
       ],
-      child: ChangeNotifierProvider<IbDrawerController>(
-        create: (_) => IbDrawerController(),
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            navigatorKey: navigatorKey,
-            title: 'IBLE',
-            home: FutureBuilder<Widget>(
-              future: getHomeScreen(context),
-              builder: (context, snapshot) {
-                if (snapshot.hasData)
-                  return snapshot.data ?? Container();
-                else
-                  return Container();
-              },
-            )),
-      ),
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          navigatorKey: navigatorKey,
+          title: 'IBLE',
+          home: FutureBuilder<Widget>(
+            future: getHomeScreen(context),
+            builder: (context, snapshot) {
+              if (snapshot.hasData)
+                return snapshot.data ?? Container();
+              else
+                return Container();
+            },
+          )),
     );
   }
 }
 
 class IbleSplashPage extends StatefulWidget {
-  
   @override
   _IbleSplashPageState createState() => _IbleSplashPageState();
 }
@@ -152,17 +157,27 @@ class _IbleSplashPageState extends State<IbleSplashPage>
       //setState(() {});
     });
     _animationController.forward();
+   final type = BlocProvider.of<SelectedItemBloc>(context).state.selectedItemType;
+   final item = BlocProvider.of<SelectedItemBloc>(context).state.selectedItem;
+    if(type == SelectedItemType.Category)
     Timer(
-      Duration(milliseconds: 1500),
+      Duration(milliseconds: 1000),
       () => Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (BuildContext context) => CategoryPage(category:BlocProvider.of<CategoriesBloc>(context)
-                    .state
-                    .favoriteCategory ??
-                Category.favorite())
-        ),
+            builder: (BuildContext context) => CategoryPage(
+                category:item as Category)),
       ),
     );
+    else if(type == SelectedItemType.Note) {
+      Timer(
+      Duration(milliseconds: 1000),
+      () => Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (BuildContext context) => NotePage(
+                note: item as NoteModel )),
+      ),
+    );
+    }
   }
 
   @override

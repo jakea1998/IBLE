@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/blocs/notes/notes_bloc.dart';
+import 'package:ible/blocs/selected_item/selected_item_bloc.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/note_model.dart';
 import 'package:ible/theme.dart';
@@ -143,7 +144,10 @@ onCategoryLongPress(BuildContext context, Category category, bool showSub) {
                     child: Row(
                       children: [
                         Text(
-                          (category.parent == null || category.parent.toString() == "null")? 'Rename Cat...' : 'Rename Subcat...',
+                          (category.parent == null ||
+                                  category.parent.toString() == "null")
+                              ? 'Rename Cat...'
+                              : 'Rename Subcat...',
                           overflow: TextOverflow.ellipsis,
                         ),
                         Spacer(),
@@ -258,11 +262,13 @@ onCategoryLongPress(BuildContext context, Category category, bool showSub) {
                 CupertinoActionSheetAction(
                   onPressed: () async {
                     Navigator.pop(context);
-                    if (await (deleteCat.deleteCategoryDialog(context, category))) {
-                      Provider.of<IbDrawerController>(context, listen: false)
-                          .select("2");
-                      BlocProvider.of<CategoriesBloc>(context).add(
-                          CategoriesEventDeleteCategory(category: category));
+                    if (await (deleteCat.deleteCategoryDialog(
+                        context, category))) {
+                      BlocProvider.of<SelectedItemBloc>(context).add(
+                          SelectedItemEventSelectItem(
+                              item: BlocProvider.of<CategoriesBloc>(context)
+                                  .state
+                                  .favoriteCategory));
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => CategoryPage(

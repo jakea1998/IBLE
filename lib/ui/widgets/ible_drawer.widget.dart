@@ -1,21 +1,8 @@
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:ible/models/category_model.dart';
-import 'package:ible/ui/pages/category_page.dart';
 
-import 'package:ible/ui/widgets/dcupertino_overflow_menu.widget.dart';
-import 'package:ible/ui/widgets/drawer.controller.dart';
-import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
-import 'package:ible/theme.dart';
-import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
-import 'package:ible/utils/text_has_overflow.dart';
-import 'package:provider/provider.dart';
-import 'dart:math' as math;
 
-import 'drawer_list_item.widget.dart';
 
 class IbleFlatDrawer extends StatefulWidget {
   @override

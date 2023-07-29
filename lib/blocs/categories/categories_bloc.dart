@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:ible/blocs/repos/category_repo.dart';
+import 'package:ible/blocs/selected_item/selected_item_bloc.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/passage_model.dart';
 
@@ -11,11 +13,20 @@ part 'categories_event.dart';
 part 'categories_state.dart';
 
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
+  final SelectedItemBloc selectedItemBloc;
   StreamSubscription<List<Category>>? _stream;
   CategoryRepo _categoryRepo = CategoryRepo();
   FirebaseAuth _auth = FirebaseAuth.instance;
-  CategoriesBloc() : super(CategoriesState.initial()) {
+  CategoriesBloc({required this.selectedItemBloc}) : super(CategoriesState.initial()) {
+    selectedItemBloc.stream.listen((event) {
+     
+        if (event.selectedItem is Category) {
+          add(CategoriesEventSelectCategory(category: event.selectedItem));
+        }
+      
+    });
     on<CategoriesEventLoadCategories>((event, emit) async{
+      
       emit(state.copyWith(
           status: CategoriesStatus.loading, categories: state.categories));
       try {
@@ -24,7 +35,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
         _stream = _categoryRepo
             .getAllCategories(userId: userId ?? '')
             .listen((event) {
-          print('updateCategoriesssss');
+          
           add(CategoriesEventUpdateCategories(categories: event));
           if (shouldSelect) {
             add(CategoriesEventSelectCategory(

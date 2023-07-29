@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
+import 'package:ible/blocs/selected_item/selected_item_bloc.dart';
 import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/models/passage_model.dart';
@@ -117,10 +118,8 @@ class ScriptureListItem extends StatelessWidget {
                 children: [
                   ...sharedCategories.map((category) => InkWell(
                     onTap: () { 
-                     Provider.of<IbDrawerController>(context, listen: false)
-                .select(category.id ?? "2");
-            BlocProvider.of<CategoriesBloc>(context)
-                .add(CategoriesEventSelectCategory(category: category));
+                    BlocProvider.of<SelectedItemBloc>(context).add(
+                          SelectedItemEventSelectItem(item: category));
                       Navigator.pushReplacement(
                       context,
                       SlideFromRightPageRoute(
