@@ -17,7 +17,8 @@ class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
   final _auth = FirebaseAuth.instance;
   final SelectedItemBloc selectedItemBloc;
   StreamSubscription<List<Passage>>? _stream1;
-  ScripturesBloc({required this.selectedItemBloc}) : super(ScripturesState.initial()) {
+  ScripturesBloc({required this.selectedItemBloc})
+      : super(ScripturesState.initial()) {
     /* on<ScripturesEventLoadScriptures>((event, emit) {
       // TODO: implement event handler
       final _auth = FirebaseAuth.instance;
@@ -57,10 +58,12 @@ class ScripturesBloc extends Bloc<ScripturesEvent, ScripturesState> {
     }); */
     on<ScripturesEventMoveVerse>((event, emit) async {
       try {
+       
         await _repo.deleteVerse(
             category: event.oldCategory,
             verse: event.verse,
             userId: _auth.currentUser?.uid ?? "");
+       
         await _repo.saveVerses(
             isNew: false,
             category: event.newCategory,

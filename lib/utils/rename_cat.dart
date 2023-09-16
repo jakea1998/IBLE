@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ible/models/category_model.dart';
 import 'package:ible/theme.dart';
 import 'package:ible/utils/edit_cat.dart';
+
+import '../blocs/categories/categories_bloc.dart';
+import '../ui/widgets/dnotification_dialog.widget.dart';
 
 void renameCategory(openContext, Category? category) => showGeneralDialog(
       barrierLabel: "Label",
@@ -81,7 +85,10 @@ void renameCategory(openContext, Category? category) => showGeneralDialog(
                         controller: _textFieldController,
                         onSubmitted: (value) {
                           category.title = value.trim();
-                          editCategory(openContext, category);
+                           BlocProvider.of<CategoriesBloc>(context)
+                            .add(CategoriesEventRenameCategory(category: category ?? Category()));
+                            Navigator.pop(context);
+                            showNotificationDialog(context, "Name Changed");
                         },
                       ),
                     ),

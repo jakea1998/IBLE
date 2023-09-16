@@ -32,7 +32,7 @@ class DrawerListItem extends StatelessWidget {
           children: [
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6),
               child: this.iconWidget ??
                   Icon(
                     icon,
@@ -67,6 +67,7 @@ class DrawerListItem extends StatelessWidget {
                             style: Theme.of(context).textTheme.headline6!.copyWith(
                               color: ThemeColors.greyBCBCCO,
                               fontWeight: FontWeight.normal,
+                              fontSize: 16
                             ),
                           ),
                         ),

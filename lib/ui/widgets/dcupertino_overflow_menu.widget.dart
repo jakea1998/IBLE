@@ -106,7 +106,7 @@ class _DCupertinoOverflowMenuState extends State<DCupertinoOverflowMenu>
         color: Colors.transparent,
         child: Stack(
           children: <Widget>[
-            Positioned(
+            /* Positioned(
               //alignment: Alignment.topCenter,
               right: 6,
               top: 0,
@@ -122,14 +122,13 @@ class _DCupertinoOverflowMenuState extends State<DCupertinoOverflowMenu>
                   ),
                 ),
               ),
-            ),
+            ), */
             Padding(
               padding: const EdgeInsets.only(top: 9.0),
               child: Container(
                 // padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: widget.backgroundColor ??
-                      Theme.of(context).backgroundColor,
+                  color: Colors.white,
                   borderRadius: _borderRadius,
                 ),
                 child: Column(

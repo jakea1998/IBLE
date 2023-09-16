@@ -11,6 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SlidingScaffold(
+      isOpen: false,
       title: Text(
         "Ible",
         style: Theme.of(context)

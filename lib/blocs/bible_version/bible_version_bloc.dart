@@ -52,7 +52,12 @@ class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
     on<BibleVersionFetchSavedBibleVersion>((event, emit) async {
       try {
         if (_stream1 != null) _stream1 == null;
-
+        final exists = await _bibleRepo.checkIfVersionExists(userId: _auth.currentUser?.uid ?? "");
+        if(!exists){
+          await _bibleRepo.saveBibleVersion(
+              userId: _auth.currentUser?.uid ?? "",
+              savedVersion: Data.defaultVersion());
+        }
         _stream1 = _bibleRepo
             .fetchSavedBibleVersion(userId: _auth.currentUser?.uid ?? "")
             .listen((event) {
@@ -60,7 +65,7 @@ class BibleVersionBloc extends Bloc<BibleVersionEvent, BibleVersionState> {
           if (event.id == null || event.id == "") {
             bibleData = Data.defaultVersion();
           }
-         
+
           add(BibleVersionUpdateBibleVersion(data: bibleData));
         });
       } on Exception catch (e) {

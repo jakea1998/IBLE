@@ -50,8 +50,8 @@ class ScriptureListItem extends StatelessWidget {
               Text(
                 ' ${scripture.reference}',
                 style: Theme.of(context).textTheme.headline5!.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
               ),
               Padding(
@@ -124,7 +124,8 @@ class ScriptureListItem extends StatelessWidget {
                       context,
                       SlideFromRightPageRoute(
                         widget: CategoryPage(
-                          category: category,
+                          isOpen: false,
+                          
                         ),
                     ),
                     );

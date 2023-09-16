@@ -1,5 +1,6 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:ible/blocs/repos/base_version_repo.dart';
 import 'package:ible/blocs/utils/paths.dart';
@@ -35,13 +36,15 @@ class VersionRepo extends BaseVersionRepo {
   }
 
   @override
-  Stream<Data> fetchSavedBibleVersion({required String userId})  {
+  Stream<Data> fetchSavedBibleVersion({required String userId}) {
     // TODO: implement fetchSavedBibleVersion
+    print(userId);
+
     return _firebaseFirestore
         .collection(Paths.version_collection)
         .doc(userId)
-        .snapshots().map((event) => Data.fromJson(event.data() ?? {}));
-    
+        .snapshots()
+        .map((event) => Data.fromJson(event.data() ?? {}));
   }
 
   @override
@@ -54,7 +57,7 @@ class VersionRepo extends BaseVersionRepo {
   Future<void> saveBibleVersion(
       {required String userId, required Data savedVersion}) async {
     // TODO: implement saveBibleVersion
-     Map<String, dynamic> data = Map<String, dynamic>();
+    Map<String, dynamic> data = Map<String, dynamic>();
     for (var item in savedVersion.toJson().keys) {
       data[item.toString()] = savedVersion.toJson()[item];
     }
@@ -62,6 +65,17 @@ class VersionRepo extends BaseVersionRepo {
         .collection(Paths.version_collection)
         .doc(userId)
         .set(data, SetOptions(merge: true));
+  }
+
+  @override
+  Future<bool> checkIfVersionExists({required String userId}) async{
+    // TODO: implement checkIfVersionExists
+    
+    var doc = await _firebaseFirestore
+        .collection(Paths.version_collection)
+        .doc(userId).get()
+        ;
+    return doc.exists;
   }
 }
 
@@ -104,11 +118,9 @@ dynamic _returnResponse(http.Response response) {
     case 400:
       throw BadRequestException(response.body.toString());
     case 401:
-
     case 403:
       throw UnauthorisedException(response.body.toString());
     case 500:
-
     default:
       throw FetchDataException(
           'Error occured while Communication with Server with StatusCode : ${response.statusCode}');

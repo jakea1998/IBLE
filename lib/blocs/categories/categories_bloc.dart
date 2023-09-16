@@ -17,38 +17,24 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
   StreamSubscription<List<Category>>? _stream;
   CategoryRepo _categoryRepo = CategoryRepo();
   FirebaseAuth _auth = FirebaseAuth.instance;
-  CategoriesBloc({required this.selectedItemBloc}) : super(CategoriesState.initial()) {
+  CategoriesBloc({required this.selectedItemBloc})
+      : super(CategoriesState.initial()) {
     selectedItemBloc.stream.listen((event) {
-     
-        if (event.selectedItem is Category) {
-          add(CategoriesEventSelectCategory(category: event.selectedItem));
-        }
-      
+      if (event.selectedItem is Category) {
+        add(CategoriesEventSelectCategory(category: event.selectedItem));
+      }
     });
-    on<CategoriesEventLoadCategories>((event, emit) async{
-      
+    on<CategoriesEventLoadCategories>((event, emit) async {
       emit(state.copyWith(
           status: CategoriesStatus.loading, categories: state.categories));
       try {
         final userId = _auth.currentUser?.uid;
-        var shouldSelect = true;
+
         _stream = _categoryRepo
             .getAllCategories(userId: userId ?? '')
             .listen((event) {
-          
+          print("update");
           add(CategoriesEventUpdateCategories(categories: event));
-          if (shouldSelect) {
-            add(CategoriesEventSelectCategory(
-              category: event
-                      .where((element) => element.id.toString() == "2")
-                      .isNotEmpty
-                  ? event
-                      .where((element) => element.id.toString() == "2")
-                      .toList()[0]
-                  : Category.favorite(),
-            ));
-            shouldSelect = false;
-          }
         });
       } catch (e) {
         emit(state.copyWith(
@@ -56,6 +42,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
       }
     });
     on<CategoriesEventUpdateCategories>((event, emit) {
+      print("update");
       List<Category> categoriesAndSubCategories = [];
       List<String> categoriesAndSubCategoriesTitles = [];
       List<String> subCategoriesTitles = [];
@@ -68,11 +55,16 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
             subCategoriesTitles.add(sub.title ?? "");
           });
       });
+      final selectedCategory = categoriesAndSubCategories.firstWhere((element) {
+        return element.id.toString() == state.selectedCategory?.id.toString();
+      });
       emit(state.copyWith(
           status: CategoriesStatus.loaded,
           subCategoriesTitles: subCategoriesTitles,
           categoriesAndSubCategories: categoriesAndSubCategories,
+          
           categoriesAndSubCategoriesTitles: categoriesAndSubCategoriesTitles,
+          selectedCategory: selectedCategory,
           favoriteCategory:
               event.categories.where((element) => element.id == "2").isNotEmpty
                   ? event.categories
@@ -113,7 +105,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     on<CategoriesEventDeleteCategory>((event, emit) async {
       try {
         await _categoryRepo.deleteCategory(
-            category: event.category, userId:_auth.currentUser?.uid ?? '');
+            category: event.category, userId: _auth.currentUser?.uid ?? '');
       } catch (e) {
         emit(state.copyWith(
             categories: state.categories, status: CategoriesStatus.error));

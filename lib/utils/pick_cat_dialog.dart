@@ -16,6 +16,8 @@ showPickCategoryDialog(
   //List<Category> categories1 = [];
   List<Widget> getListOfCategories(BuildContext context) {
     List<Widget> widgets = [];
+    categories.removeWhere(
+        (element) => element.id.toString() == "1" || element.id.toString() == "2");
     categories.forEach((element) {
       widgets.add(Column(
         children: [
@@ -27,17 +29,16 @@ showPickCategoryDialog(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (element.parent != "null" &&
-                  element.parent != null)
-                Padding(
-                  padding: EdgeInsets.only(right: 4, bottom: 12),
-                  child: Container(
-                      height: 10,
-                      width: 10,
-                      decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(5))),
-                ),
+                if (element.parent != "null" && element.parent != null)
+                  Padding(
+                    padding: EdgeInsets.only(right: 4, bottom: 12),
+                    child: Container(
+                        height: 10,
+                        width: 10,
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(5))),
+                  ),
                 Container(
                   color: /* (widget.category?.id ==
                                                 categories?[index].id)
@@ -52,10 +53,11 @@ showPickCategoryDialog(
                         padding: EdgeInsets.all(8),
                         child: Text(
                           element.title ?? "",
-                          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                               color: ThemeColors.grey595959,
-                                fontSize: 20,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyText1!.copyWith(
+                                    color: ThemeColors.grey595959,
+                                    fontSize: 20,
+                                  ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -67,7 +69,6 @@ showPickCategoryDialog(
           ),
           Divider(
             height: 1,
-            
             thickness: 1,
           )
         ],
@@ -91,7 +92,8 @@ showPickCategoryDialog(
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top:15.0,right: 15,left: 15),
+                  padding:
+                      const EdgeInsets.only(top: 15.0, right: 15, left: 15),
                   child: Row(
                     children: [
                       Container(
@@ -140,7 +142,7 @@ showPickCategoryDialog(
                                       .textTheme
                                       .bodyText1!
                                       .copyWith(
-                                         color: ThemeColors.grey595959,
+                                        color: ThemeColors.grey595959,
                                         fontSize: 20,
                                       ),
                                 ),
@@ -152,7 +154,6 @@ showPickCategoryDialog(
                     : Container(),
                 Divider(
                   height: 0,
-                 
                   thickness: 1,
                 ),
                 Container(
@@ -190,7 +191,6 @@ showPickCategoryDialog(
                 ),
                 Divider(
                   height: 0,
-                 
                   thickness: 1,
                 ),
                 Container(
@@ -225,7 +225,6 @@ showPickCategoryDialog(
                 ),
                 Divider(
                   height: 1,
-                  
                   thickness: 2,
                 ),
                 Expanded(

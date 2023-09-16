@@ -141,6 +141,7 @@ class _NotePageState extends State<NotePage> {
     
       child: SlidingScaffold(
         appBarColor: Colors.white,
+        isOpen: false,
         title: Text(
           'Note',
           style: AppStyles.titleStyle(context),

@@ -49,7 +49,8 @@ Future _showDialogFromNowhere(context, {required Widget child}) async {
   );
 }
 
-onCategoryLongPress(BuildContext context, Category category, bool showSub) {
+onCategoryLongPress(BuildContext context, Category category, bool showSub,
+    Function onRenameCategory) {
   HapticFeedback.mediumImpact();
   print(category.parent);
   _showDialogFromNowhere(context,
@@ -137,7 +138,8 @@ onCategoryLongPress(BuildContext context, Category category, bool showSub) {
                 CupertinoActionSheetAction(
                   onPressed: () {
                     Navigator.pop(context);
-                    renameCategory(context, category);
+                    onRenameCategory();
+                    
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16.0, right: 24),
@@ -264,19 +266,23 @@ onCategoryLongPress(BuildContext context, Category category, bool showSub) {
                     Navigator.pop(context);
                     if (await (deleteCat.deleteCategoryDialog(
                         context, category))) {
+                      print(category.title);
                       BlocProvider.of<SelectedItemBloc>(context).add(
                           SelectedItemEventSelectItem(
                               item: BlocProvider.of<CategoriesBloc>(context)
                                   .state
                                   .favoriteCategory));
-                      Navigator.of(context).push(
+                      print("delete");
+                      BlocProvider.of<CategoriesBloc>(context).add(
+                          CategoriesEventDeleteCategory(category: category));
+
+                      /* Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => CategoryPage(
-                              category: BlocProvider.of<CategoriesBloc>(context)
-                                  .state
-                                  .favoriteCategory),
+                            isOpen: true,
+                          ),
                         ),
-                      );
+                      ); */
                     }
                   },
                   child: Padding(

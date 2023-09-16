@@ -6,7 +6,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:ible/blocs/bible_version/bible_version_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/blocs/notes/notes_bloc.dart';
-import 'package:ible/blocs/save_verses/save_verse_bloc.dart';
+
 import 'package:ible/blocs/scriptures/scriptures_bloc.dart';
 import 'package:ible/blocs/selected_item/selected_item_bloc.dart';
 import 'package:ible/blocs/verse/verse_bloc.dart';
@@ -61,23 +61,15 @@ class MyApp extends State<App> {
       final user = _auth.currentUser;
       if (user == null) {
         await _auth.signInAnonymously();
-
-        print('signed in anonymously');
-        /* BlocProvider.of<CategoriesBloc>(context)
-          ..add(CategoriesEventSelectCategory(
-            category: BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
-          ));  */
-        return IbleSplashPage();
+         print('signed in anonymously');
       } else {
-        print('signed in');
-        /*   BlocProvider.of<CategoriesBloc>(context)
-          ..add(CategoriesEventSelectCategory(
-            category:  BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite()
-          ));  */
+        print("signed in");
+      }
+       
         return IbleSplashPage(
             /* BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ??  */
             );
-      }
+      
     } catch (e) {
       print(e);
       return Container();
@@ -91,9 +83,7 @@ class MyApp extends State<App> {
       providers: [
         BlocProvider<SelectedItemBloc>(
           create: (context) => selectedBloc,
-        ),
-        BlocProvider<SaveVerseBloc>(
-          create: (context) => SaveVerseBloc(),
+          lazy: false,
         ),
         BlocProvider<ScripturesBloc>(
           create: (context) => ScripturesBloc(selectedItemBloc: selectedBloc),
@@ -149,6 +139,7 @@ class _IbleSplashPageState extends State<IbleSplashPage>
   @override
   void initState() {
     super.initState();
+    
     _animationController = AnimationController(vsync: this, duration: duration);
     _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0))
         .animate(
@@ -157,26 +148,34 @@ class _IbleSplashPageState extends State<IbleSplashPage>
       //setState(() {});
     });
     _animationController.forward();
-   final type = BlocProvider.of<SelectedItemBloc>(context).state.selectedItemType;
-   final item = BlocProvider.of<SelectedItemBloc>(context).state.selectedItem;
-    if(type == SelectedItemType.Category)
-    Timer(
-      Duration(milliseconds: 1000),
-      () => Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-            builder: (BuildContext context) => CategoryPage(
-                category:item as Category)),
-      ),
-    );
-    else if(type == SelectedItemType.Note) {
+   
+    final type =
+        BlocProvider.of<SelectedItemBloc>(context).state.selectedItemType ?? SelectedItemType.Category;
+    final item = BlocProvider.of<SelectedItemBloc>(context).state.selectedItem ?? BlocProvider.of<CategoriesBloc>(context).state.favoriteCategory ?? Category.favorite();
+    BlocProvider.of<SelectedItemBloc>(context).add(SelectedItemEventSelectItem(item: item,));
+    print(item);
+    if (type == SelectedItemType.Category) {
+      print("category");
       Timer(
-      Duration(milliseconds: 1000),
-      () => Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-            builder: (BuildContext context) => NotePage(
-                note: item as NoteModel )),
-      ),
-    );
+        Duration(milliseconds: 1000),
+        () => Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  CategoryPage(
+                    isOpen: true,
+                   )),
+        ),
+      );
+    } else if (type == SelectedItemType.Note) {
+      print("note");
+      Timer(
+        Duration(milliseconds: 1000),
+        () => Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  NotePage(note: item as NoteModel)),
+        ),
+      );
     }
   }
 

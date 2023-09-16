@@ -3,6 +3,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ible/blocs/bible_version/bible_version_bloc.dart';
+import 'package:ible/blocs/selected_item/selected_item_bloc.dart';
 import 'package:ible/blocs/verse/verse_bloc.dart';
 import 'package:ible/models/bible_version.dart';
 import 'package:ible/models/category_model.dart';
@@ -19,6 +20,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../blocs/categories/categories_bloc.dart';
 import '../../utils/pick_cat_dialog.dart';
+import 'category_page.dart';
 
 class AddScripturePageNew extends StatefulWidget {
   final Category? category;
@@ -50,7 +52,7 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
     // TODO: implement initState
     super.initState();
 
-    this._selectedCategory = widget.category;
+    _selectedCategory = widget.category;
     _upTabController = TabController(
         length: 2,
         vsync: this,
@@ -58,8 +60,6 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
 
     _verseTextEditingController
       ..addListener(() {
-       
-        
         context.read<VerseBloc>().add(VerseEventSearchVerse(
             query: _verseTextEditingController.text,
             bibleVersion:
@@ -70,15 +70,17 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
         TextEditingController(text: widget.category?.title ?? "");
     _categoryTextEditingController
       ..addListener(() {
-        Category category1 = Category(
+        
+          _selectedCategory = Category(
           id: Uuid().v1(),
           parent: widget.isSubCategory ? widget.parentCategory?.id : null,
-          title: _categoryTextEditingController.text,
-        );
+          title: _categoryTextEditingController.text,);
+        
+  });
+         
 
-        BlocProvider.of<VerseBloc>(context)
-          ..add(VerseEventUpdateCategory(category: category1));
-      });
+       
+    
     _upTabController.addListener(() {
       _selectedCategory = null;
       _categoryTextEditingController.clear();
@@ -99,6 +101,7 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
           padding: const EdgeInsets.only(top: 12.0, right: 12, bottom: 12),
           child: InkWell(
             onTap: () {
+              BlocProvider.of<VerseBloc>(context).add(VerseEventClearVerses());
               Navigator.pop(context);
             },
             child: ImageIcon(
@@ -238,7 +241,7 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                       ),
                       VerseDisplay(),
                       divider,
-                      SaveButton(onPressed: () async{
+                      SaveButton(onPressed: () async {
                         if (_formKey.currentState?.validate() ?? false) {
                           if (widget.isSubCategory &&
                               BlocProvider.of<CategoriesBloc>(context)
@@ -252,14 +255,15 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                             showNotificationDialog(
                                 context, "Subcategory already exists");
                             return;
-                          } else if (BlocProvider.of<CategoriesBloc>(context)
-                                  .state
-                                  .categoriesAndSubCategoriesTitles
-                                  ?.indexWhere((element) =>
-                                      element.toLowerCase() ==
-                                      _categoryTextEditingController.text
-                                          .toLowerCase()) !=
-                              -1) {
+                          } else if (_upTabController.index == 0 &&
+                              (BlocProvider.of<CategoriesBloc>(context)
+                                      .state
+                                      .categoriesAndSubCategoriesTitles
+                                      ?.indexWhere((element) =>
+                                          element.toLowerCase() ==
+                                          _categoryTextEditingController.text
+                                              .toLowerCase()) !=
+                                  -1)) {
                             showNotificationDialog(
                                 context, "Category already exists");
                             return;
@@ -272,14 +276,27 @@ class _AddScripturePageNewState extends State<AddScripturePageNew>
                                                 .state
                                                 .savedVersion ??
                                             Data.defaultVersion(),
+                                    category: _selectedCategory ??
+                                        Category(
+                                          id: Uuid().v1(),
+                                          parent: widget.isSubCategory
+                                              ? widget.parentCategory?.id
+                                              : null,
+                                          title: _categoryTextEditingController
+                                              .text,
+                                        ),
                                     verses: BlocProvider.of<VerseBloc>(context)
                                             .state
                                             .verses ??
                                         [],
                                     isNew: _categoryHintText ==
                                         "Type new category name"));
-
-                            Navigator.pop(context);
+                            BlocProvider.of<SelectedItemBloc>(context).add(
+                                  SelectedItemEventSelectItem(
+                                      item: _selectedCategory));
+                          
+                              Navigator.pop(context);
+                            
                             await showNotificationDialog(context,
                                 "Saved to ${_categoryTextEditingController.text}");
                           }

@@ -37,8 +37,6 @@ class ScriptureWidget extends StatefulWidget {
 }
 
 class _ScriptureWidgetState extends State<ScriptureWidget> {
-  
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -57,26 +55,24 @@ class _ScriptureWidgetState extends State<ScriptureWidget> {
       child: Container(
         color: Colors.transparent,
         child: Slidable(
-          
-          
-         endActionPane: ActionPane(
-          motion: ScrollMotion(),
-          children: [
-          
+          endActionPane:
+              ActionPane(extentRatio: 0.65, motion: ScrollMotion(), children: [
             SlidableAction(
               backgroundColor: Colors.grey[900] ?? Colors.grey,
               label: 'MOVE TO',
               foregroundColor: Colors.white,
+              padding: const EdgeInsets.only(bottom: 8.0, left: 4, right: 4),
               icon: Icons.arrow_right,
-           
-              onPressed:(context)=> widget.onMoveTapped,
+              onPressed: (context) {
+                widget.onMoveTapped();
+              },
             ),
-             SlidableAction(
+            SlidableAction(
               backgroundColor: Colors.black87,
               foregroundColor: Colors.white,
               icon: Icons.pin,
-              label:'PIN TOP',
-              padding: const EdgeInsets.only(bottom: 8.0),
+              label: 'PIN TOP',
+              padding: const EdgeInsets.only(bottom: 8.0, left: 4, right: 4),
               onPressed: (context) {
                 if (widget.selectedCategory.pinned?.id.toString() ==
                     widget.selectedCategory.verses?[widget.index].id
@@ -88,30 +84,27 @@ class _ScriptureWidgetState extends State<ScriptureWidget> {
                       CategoriesEventPinOrUnpinVerse(
                           pinOrUnpin: true,
                           verse:
-                              widget.selectedCategory.verses?[widget.index] ?? Passage.empty()));
+                              widget.selectedCategory.verses?[widget.index] ??
+                                  Passage.empty()));
                 }
                 /*  Provider.of<CategoryController>(context, listen: false)
                           .pinScripture(category!, scripture.id); */
               },
             ),
             SlidableAction(
-                            label: 'DELETE',
-                            backgroundColor: ThemeColors.redDD4C4F,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            
-                            icon:  Icons.delete,
-                            
-                            onPressed: (context)  async{
-                            deleteScriptureDialog(
+              label: 'DELETE',
+              backgroundColor: ThemeColors.redDD4C4F,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.only(bottom: 8.0, right: 4, left: 4),
+              icon: Icons.delete,
+              onPressed: (context) async {
+                deleteScriptureDialog(
                     context,
                     widget.selectedCategory.verses?[widget.index] ??
                         Passage.empty());
-                
-                            },
-                          ),
-           
-         ]),
+              },
+            ),
+          ]),
           child: Container(
             padding:
                 EdgeInsets.only(left: 16.0, top: 16, bottom: 16, right: 16),
@@ -126,11 +119,8 @@ class _ScriptureWidgetState extends State<ScriptureWidget> {
                   Passage.empty(),
             ),
           ),
-          
-          
         ),
       ),
     );
-    
   }
 }

@@ -34,9 +34,10 @@ class VerseEventSearchVerse extends VerseEvent {
 class VerseEventSaveScripture extends VerseEvent {
   final bool isNew;
   final List<Passage> verses;
+  final Category category;
   final Data bibleVersion;
   const VerseEventSaveScripture(
-      {required this.verses, required this.isNew, required this.bibleVersion});
+      {required this.verses,required this.category, required this.isNew, required this.bibleVersion});
   @override
   List<Object?> get props => [verses];
 }
@@ -47,3 +48,5 @@ class VerseEventUpdateCategory extends VerseEvent {
   @override
   List<Object?> get props => [category];
 }
+
+class VerseEventClearVerses extends VerseEvent{}

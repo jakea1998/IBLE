@@ -33,7 +33,7 @@ class Category {
   factory Category.memory() {
     return Category(
       id: "1",
-      title: 'Memories',
+      title: 'Memory Verses',
     );
   }
   factory Category.fromJson(Map<dynamic, dynamic> json) {

@@ -43,22 +43,37 @@ class CategoryRepo extends BaseCategoryRepo {
         .onValue
         .map((e) {
       List<Category>? categories = [];
-
+      
+      
       if (e.snapshot.value != null) {
-        Map<dynamic, dynamic> map = e.snapshot.value as Map<dynamic, dynamic>;
-        print('snap');
-        map.forEach((key, value) {
-          try{
-          final category = Category.fromJson(value);
-          categories.add(
-            category
-          );}
-          catch(e){
-            print(e);
-          }
-        });
+       
+        if (e.snapshot.value.runtimeType is List<Object>?) {
+          List<dynamic> list = e.snapshot.value as List<dynamic>;
+          list.forEach((element) {
+            print(element);
+            try {
+              final category = Category.fromJson(element);
+              categories.add(category);
+            } catch (e) {
+              print(e);
+            }
+          });
+        } else {
+          
+          Map<dynamic, dynamic> map = e.snapshot.value as Map<dynamic, dynamic>;
+     
+          map.forEach((key, value) {
+            try {
+              final category = Category.fromJson(value);
+              categories.add(category);
+            } catch (e) {
+              print(e);
+            }
+          });
+        }
+        return categories;
       }
-      return categories;
+      return [];
     });
   }
 
@@ -86,9 +101,30 @@ class CategoryRepo extends BaseCategoryRepo {
   Future<void> deleteCategory(
       {required Category category, required String userId}) async {
     // TODO: implement deleteCategory
-/* 
     // delete category
-    await _firebaseFirestore
+     if (category.parent == "null" || category.parent == null) {
+      print("delete");
+      await _firebaseDb
+          .ref()
+          .child(Paths.categories_collection)
+          .child(userId)
+          .child(Paths.categories_subcollection)
+          .child(category.id ?? "")
+         
+          .remove();
+    } else {
+      await _firebaseDb
+          .ref()
+          .child(Paths.categories_collection)
+          .child(userId)
+          .child(Paths.categories_subcollection)
+          .child(category.parent ?? "")
+          .child(Paths.sub_categories_collection)
+          .child(category.id ?? "")
+          
+          .remove();
+    }
+   /*  await _firebaseFirestore
         .collection(Paths.categories_collection)
         .doc(userId)
         .collection(Paths.categories_subcollection)
@@ -181,6 +217,6 @@ class CategoryRepo extends BaseCategoryRepo {
       });
     }
 
-    await batch.commit(); */
+    await batch.commit(); */ 
   }
 }

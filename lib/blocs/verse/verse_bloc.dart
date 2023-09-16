@@ -20,13 +20,12 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
     on<VerseEventSearchVerse>((event, emit) async {
       emit(state.copyWith(verseStatus: VerseStatus.loading));
       try {
-        print("search");
+      
         final verses = await _repo.searchVerses(
           query: event.query ?? '',
           bibleVersion: event.bibleVersion,
         );
-        print("verse length");
-        print(verses.length);
+       
         emit(state.copyWith(verseStatus: VerseStatus.loaded, verses: verses));
       } catch (e) {
         emit(state.copyWith(
@@ -48,8 +47,7 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
     on<VerseEventUpdateCategory>((event, emit) {
       emit(state.copyWith(
           verseStatus: VerseStatus.loading, verses: state.verses));
-      print('cat');
-      print(event.category?.title);
+      
       emit(state.copyWith(
         selectedCat: event.category,
         verseStatus: VerseStatus.loaded,
@@ -61,22 +59,28 @@ class VerseBloc extends Bloc<VerseEvent, VerseState> {
       ));
       try {
         print(state.selectedCat);
-        if (state.selectedCat != null) {
-          print('selected');
-
+        
           await _repo.saveVerses(
-              category: state.selectedCat!,
+              category: event.category,
               verses: event.verses,
               bibleVersion: event.bibleVersion,
               isNew: event.isNew,
               userId: _auth.currentUser?.uid ?? "");
-          print('saved');
-        }
+          add(VerseEventClearVerses());
+        
       } catch (e) {
         emit(state.copyWith(
           verseStatus: VerseStatus.error,
         ));
       }
+    });
+    on<VerseEventClearVerses>((event, emit) {
+      emit(state.copyWith(
+        verseStatus: VerseStatus.loading,
+      ));
+      emit(state.copyWith(verseStatus: VerseStatus.loaded,
+      verses:[]
+      ));
     });
   }
 }

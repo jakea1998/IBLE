@@ -28,6 +28,7 @@ class _SettingsPageState extends State<SettingsPage> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     // TODO: implement build
     return SlidingScaffold(
+      isOpen: false,
       title: Text('Settings',
           style: TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),

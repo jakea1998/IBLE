@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ible/blocs/categories/categories_bloc.dart';
 import 'package:ible/models/category_model.dart';
+import 'package:ible/ui/widgets/dnotification_dialog.widget.dart';
 
 editCategory(BuildContext context, Category? category) async {
-  BlocProvider.of<CategoriesBloc>(context)
-      .add(CategoriesEventRenameCategory(category: category ?? Category()));
+ 
   /* final edited = await Provider.of<CategoryController>(context, listen: false)
       .update(category); */
   /*  if (edited != null) {

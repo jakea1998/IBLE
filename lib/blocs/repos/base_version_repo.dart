@@ -8,4 +8,5 @@ abstract class BaseVersionRepo {
   Future<void> saveBibleVersion(
       {required String userId, required Data savedVersion});
   Stream<Data> fetchSavedBibleVersion({required String userId});
+  Future<bool> checkIfVersionExists({required String userId});
 }

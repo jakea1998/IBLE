@@ -6,6 +6,7 @@ import 'package:ible/ui/widgets/menu.dart';
 
 class SlidingScaffold extends StatefulWidget {
   final Widget body;
+  final bool isOpen;
   final Widget title;
   final List<Widget>? actions;
   final Widget? floatingActionButton;
@@ -15,6 +16,7 @@ class SlidingScaffold extends StatefulWidget {
   const SlidingScaffold({
     Key? key,
     required this.body,
+    required this.isOpen,
     required this.title,
     this.actions,
     this.floatingActionButton,
@@ -41,7 +43,12 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
   void initState() {
     // TODO: implement initState
     super.initState();
-   /*  _key.currentState?.animationController.addListener(() {
+    if (widget.isOpen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        open();
+      });
+    }
+    /*  _key.currentState?.animationController.addListener(() {
       if (_key.currentState?.isDrawerOpen ?? false) {
         if(widget.onWillOpen != null) {
           widget.onWillOpen!();
@@ -96,11 +103,10 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-     
-                      data: Theme.of(context).copyWith(
-                        appBarTheme: AppBarTheme(
-                            color: widget.appBarColor ??
-                                Theme.of(context).backgroundColor),),
+      data: Theme.of(context).copyWith(
+        appBarTheme: AppBarTheme(
+            color: widget.appBarColor ?? Theme.of(context).backgroundColor),
+      ),
       child: Scaffold(
         body: SliderDrawer(
           animationDuration: 100,
@@ -108,10 +114,9 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
           appBar: SliderAppBar(
               appBarColor:
                   widget.appBarColor ?? Theme.of(context).backgroundColor,
-              appBarHeight: 100,
+              appBarHeight: 120,
               drawerIcon: Stack(
                 children: [
-                  
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16),
@@ -124,14 +129,13 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
                   ),
                   Center(
                     child: GestureDetector(
-                      onTap:(){
+                      onTap: () {
                         if (_key.currentState?.isDrawerOpen ?? false) {
                           _key.currentState?.closeSlider();
                         } else {
                           _key.currentState?.openSlider();
                         }
                       },
-                      
                       child: Container(
                         height: 100,
                         width: 100,
@@ -141,7 +145,7 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
                   )
                 ],
               ),
-              drawerIconSize: 90,
+              drawerIconSize: 60,
               trailing:
                   Row(children: widget.actions != null ? widget.actions! : []),
               title: widget.title),
@@ -156,20 +160,21 @@ class _SlidingScaffoldState extends State<SlidingScaffold> {
                       height: 1,
                     ),
                   Expanded(child: widget.body),
-                  
                 ],
               ),
-              widget.floatingActionButton != null ?Positioned.fill( child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom:60.0),
-                  child: widget.floatingActionButton ?? Container(),
-                ))) : Container(),
+              widget.floatingActionButton != null
+                  ? Positioned.fill(
+                      child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 60.0),
+                            child: widget.floatingActionButton ?? Container(),
+                          )))
+                  : Container(),
             ],
           ),
         ),
         //floatingActionButton:  widget.floatingActionButton,
-        
       ),
     );
   }

@@ -83,26 +83,24 @@ class VerseRepo extends BaseVerseRepo {
       verses[i].categoryId = category.id;
       verses[i].bibleVersion = bibleVersion;
     }
-    print('save');
-    category.verses = [];
+    print(category.verses);
 
     category.verses?.addAll(verses);
     print(category.verses?[0]);
+
     if (category.parent == "null" || category.parent == null) {
-      print('save2');
-      print(category.id);
-      print(userId.toString());
-      print(category.toJson());
-      try{
-       await _firebaseDb
-          .ref()
-          .child(Paths.categories_collection)
-          .child(userId.toString())
-          .child(Paths.categories_subcollection)
-          .child(category.id.toString())
-          .set(category.toJson()); }on FirebaseException catch(e){
-            print(e.message);
-          }
+      try {
+        print("delete");
+        await _firebaseDb
+            .ref()
+            .child(Paths.categories_collection)
+            .child(userId.toString())
+            .child(Paths.categories_subcollection)
+            .child(category.id.toString())
+            .set(category.toJson());
+      } on FirebaseException catch (e) {
+        print(e.message);
+      }
     } else {
       await _firebaseDb
           .ref()
@@ -125,6 +123,7 @@ class VerseRepo extends BaseVerseRepo {
       required String userId}) async {
     // TODO: implement deleteVerse
     if (category.parent == "null" || category.parent == null) {
+      print("delete");
       await _firebaseDb
           .ref()
           .child(Paths.categories_collection)

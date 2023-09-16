@@ -17,6 +17,7 @@ import 'package:ible/ui/pages/sign_in.dart';
 import 'package:ible/ui/widgets/slide_from_bottom_page_route.widget.dart';
 import 'package:ible/ui/widgets/slide_from_right_page_route.widget.dart';
 import 'package:ible/utils/cat_long_press.dart';
+import 'package:ible/utils/rename_cat.dart';
 import 'dart:math' as math;
 import '../../theme.dart';
 import 'dcupertino_overflow_menu.widget.dart';
@@ -77,17 +78,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                                   .state
                                                   .memoryVersesCategory ??
                                               Category.memory()));
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
+                                  Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => CategoryPage(
-                                          category:
-                                              BlocProvider.of<CategoriesBloc>(
-                                                          context)
-                                                      .state
-                                                      .memoryVersesCategory ??
-                                                  Category.memory()),
-                                    ),
-                                  );
+                                            isOpen: false,
+                                          )));
                                 },
                                 iconWidget: Image.asset(
                                   'assets/images/icons/memory_verses.png',
@@ -115,12 +109,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => CategoryPage(
-                                          category:
-                                              BlocProvider.of<CategoriesBloc>(
-                                                          context)
-                                                      .state
-                                                      .favoriteCategory ??
-                                                  Category.favorite()),
+                                        isOpen: false,
+                                      ),
                                     ),
                                   );
                                 },
@@ -180,7 +170,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                                   },
                                   style: OutlinedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(13.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                     ),
                                     side: BorderSide(
                                         width: 2, color: Color(0xFFCACADA)),
@@ -274,6 +264,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     child: ImageIcon(
                       AssetImage('assets/images/icons/arrow_right.png'),
                       color: Colors.white,
+                      size: 17,
                     ),
                   ),
                   onTap: () => _toggleExpanded(category),
@@ -294,93 +285,15 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               context,
               new MaterialPageRoute(
                 builder: (context) => CategoryPage(
-                  category: category,
+                  isOpen: false,
                 ),
               ),
             );
           },
-          onLongPress: () => onCategoryLongPress(context, category, true),
+          onLongPress: () => onCategoryLongPress(context, category, true, () {
+            renameCategory(context, category);
+          }),
         ),
-        if (isOpen && hasChildren)
-          Padding(
-            padding: const EdgeInsets.only(left: 50.0),
-            child: ListView.builder(
-                itemCount: category.subCategories!.length,
-                shrinkWrap: true,
-                itemBuilder: (context, position) {
-                  final subCategory = category.subCategories![position];
-                  return Column(
-                    children: [
-                      DrawerListItem(
-                        selected: selectedItemState.selectedItemType ==
-                                SelectedItemType.Category
-                            ? (selectedItemState.selectedItem as Category)
-                                    .id
-                                    .toString() ==
-                                subCategory.id.toString()
-                            : false,
-                        title: '${subCategory.title}',
-                        iconWidget: Container(
-                            height: 10,
-                            width: 10,
-                            decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(5))),
-                        onTap: () {
-                          BlocProvider.of<SelectedItemBloc>(context).add(
-                              SelectedItemEventSelectItem(item: subCategory));
-                          /* BlocProvider.of<ScripturesBloc>(context).add(
-                              ScripturesEventSelectCategory(
-                                  category: subCategory)); */
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                              builder: (context) => CategoryPage(
-                                category: subCategory,
-                              ),
-                            ),
-                          );
-                        },
-                        //todo: Work on this logic
-                        onLongPress: () =>
-                            onCategoryLongPress(context, subCategory, false),
-                      ),
-                      if (subCategory.notes?.isNotEmpty ?? false)
-                        DrawerListItem(
-                          selected: selectedItemState.selectedItemType ==
-                                  SelectedItemType.Note
-                              ? (selectedItemState.selectedItem as NoteModel)
-                                      .id
-                                      .toString() ==
-                                  subCategory.notes![0].id.toString()
-                              : false,
-                          onTap: () async {
-                            BlocProvider.of<SelectedItemBloc>(context).add(
-                                SelectedItemEventSelectItem(
-                                    item: subCategory.notes?[0]));
-                            Navigator.push(
-                              context,
-                              SlideFromRightPageRoute(
-                                  widget: NotePage(
-                                note: subCategory.notes?[0],
-                              )),
-                            );
-                          },
-                          iconWidget: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 8),
-                            child: ImageIcon(
-                              AssetImage('assets/images/icons/note.png'),
-                              color: ThemeColors.grey808082,
-                            ),
-                          ),
-                          title: 'Note',
-                        ),
-                    ],
-                  );
-                }),
-          ),
         if (isOpen && hasNote)
           Column(
             children: category.notes
@@ -406,8 +319,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                           );
                         },
                         iconWidget: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0.0, vertical: 0),
+                          padding: const EdgeInsets.only(left: 34),
                           child: ImageIcon(
                             AssetImage('assets/images/icons/note.png'),
                             color: ThemeColors.grey808082,
@@ -419,6 +331,89 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     .toList() ??
                 [],
           ),
+        if (isOpen && hasChildren)
+          ListView.builder(
+              itemCount: category.subCategories!.length,
+              shrinkWrap: true,
+              itemBuilder: (context, position) {
+                final subCategory = category.subCategories![position];
+                return Column(
+                  children: [
+                    DrawerListItem(
+                      selected: selectedItemState.selectedItemType ==
+                              SelectedItemType.Category
+                          ? (selectedItemState.selectedItem as Category)
+                                  .id
+                                  .toString() ==
+                              subCategory.id.toString()
+                          : false,
+                      title: '${subCategory.title}',
+                      iconWidget: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 45.0, top: 8, bottom: 8),
+                        child: Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(5))),
+                      ),
+                      onTap: () {
+                        BlocProvider.of<SelectedItemBloc>(context).add(
+                            SelectedItemEventSelectItem(item: subCategory));
+                        /* BlocProvider.of<ScripturesBloc>(context).add(
+                            ScripturesEventSelectCategory(
+                                category: subCategory)); */
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                            builder: (context) => CategoryPage(
+                              isOpen: false,
+                            ),
+                          ),
+                        );
+                      },
+                      //todo: Work on this logic
+                      onLongPress: () =>
+                          onCategoryLongPress(context, subCategory, false, () {
+                        renameCategory(context, subCategory);
+                      }),
+                    ),
+                    if (subCategory.notes?.isNotEmpty ?? false)
+                      DrawerListItem(
+                        selected: selectedItemState.selectedItemType ==
+                                SelectedItemType.Note
+                            ? (selectedItemState.selectedItem as NoteModel)
+                                    .id
+                                    .toString() ==
+                                subCategory.notes![0].id.toString()
+                            : false,
+                        onTap: () async {
+                          BlocProvider.of<SelectedItemBloc>(context).add(
+                              SelectedItemEventSelectItem(
+                                  item: subCategory.notes?[0]));
+                          Navigator.push(
+                            context,
+                            SlideFromRightPageRoute(
+                                widget: NotePage(
+                              note: subCategory.notes?[0],
+                            )),
+                          );
+                        },
+                        iconWidget: Padding(
+                          padding: const EdgeInsets.only(left: 68),
+                          child: ImageIcon(
+                            AssetImage('assets/images/icons/note.png'),
+                            color: ThemeColors.grey808082,
+                          ),
+                        ),
+                        title: 'Note',
+                      ),
+                  ],
+                );
+              }),
+        
       ],
     );
   }
