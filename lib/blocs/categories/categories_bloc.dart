@@ -58,6 +58,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
       final selectedCategory = categoriesAndSubCategories.firstWhere((element) {
         return element.id.toString() == state.selectedCategory?.id.toString();
       });
+      
       emit(state.copyWith(
           status: CategoriesStatus.loaded,
           subCategoriesTitles: subCategoriesTitles,
@@ -104,6 +105,9 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     });
     on<CategoriesEventDeleteCategory>((event, emit) async {
       try {
+        if(event.category.id == state.selectedCategory?.id){
+          selectedItemBloc.add(SelectedItemEventSelectItem(item: state.favoriteCategory));
+        }
         await _categoryRepo.deleteCategory(
             category: event.category, userId: _auth.currentUser?.uid ?? '');
       } catch (e) {

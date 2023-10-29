@@ -54,7 +54,8 @@ dependencies:
   
 dependency_overrides:
   webview_flutter_wkwebview: '3.5.0'
-    
+  archive: ^3.3.8
+  test_api: 0.5.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

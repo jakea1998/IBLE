@@ -47,7 +47,7 @@ class CategoryRepo extends BaseCategoryRepo {
       
       if (e.snapshot.value != null) {
        
-        if (e.snapshot.value.runtimeType is List<Object>?) {
+        if (e.snapshot.value.runtimeType is List<Object?>) {
           List<dynamic> list = e.snapshot.value as List<dynamic>;
           list.forEach((element) {
             print(element);

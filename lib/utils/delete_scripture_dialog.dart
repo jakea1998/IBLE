@@ -8,7 +8,8 @@ import 'package:ible/models/passage_model.dart';
 import 'package:ible/theme.dart';
 import 'package:ible/ui/widgets/dnotification_dialog.widget.dart';
 
-deleteScriptureDialog(BuildContext openContext, Passage scripture) {
+deleteScriptureDialog(BuildContext openContext, Passage scripture,
+    VoidCallback deleteVerse) {
   showCupertinoModalPopup(
     context: openContext,
     builder: (context) {
@@ -33,37 +34,7 @@ deleteScriptureDialog(BuildContext openContext, Passage scripture) {
         actions: [
           CupertinoActionSheetAction(
             onPressed: () async {
-              if (BlocProvider.of<CategoriesBloc>(context)
-                      .state
-                      .selectedCategory
-                      ?.pinned !=
-                  null) if (BlocProvider.of<CategoriesBloc>(context)
-                      .state
-                      .selectedCategory
-                      ?.pinned
-                      ?.id
-                      .toString() ==
-                  scripture.id.toString()) {
-                BlocProvider.of<CategoriesBloc>(context)
-                    .add(CategoriesEventPinOrUnpinVerse(pinOrUnpin: false));
-              }
-              print('delete');
-              BlocProvider.of<ScripturesBloc>(context).add(
-                  ScripturesEventDeleteVerse(
-                      category: BlocProvider.of<CategoriesBloc>(context)
-                              .state
-                              .selectedCategory ??
-                          Category(),
-                      verse: scripture));
-
-              /*  await Provider.of<ScriptureController>(context, listen: false)
-                  .delete(scripture.id);
-              await Provider.of<CategoryController>(context, listen: false)
-                  .refresh(); */
-              // BlocProvider.of<CategoryBloc>(context, listen: false)
-              //     .add(GetCategories());
-              Navigator.pop(context);
-              showNotificationDialog(openContext, "Scripture Deleted");
+              deleteVerse();
             },
             child: Text('OK'),
             isDestructiveAction: true,

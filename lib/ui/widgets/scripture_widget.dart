@@ -19,6 +19,7 @@ class ScriptureWidget extends StatefulWidget {
   final int index;
   final SlidableController slidableController;
   final VoidCallback onMoveTapped;
+  final VoidCallback onDeleteTapped;
   final List<Category> sharedCats;
   final List<Category> sharedSubCats;
 
@@ -28,6 +29,7 @@ class ScriptureWidget extends StatefulWidget {
       required this.index,
       required this.slidableController,
       required this.onMoveTapped,
+      required this.onDeleteTapped,
       required this.sharedCats,
       required this.sharedSubCats})
       : super(key: key);
@@ -101,7 +103,9 @@ class _ScriptureWidgetState extends State<ScriptureWidget> {
                 deleteScriptureDialog(
                     context,
                     widget.selectedCategory.verses?[widget.index] ??
-                        Passage.empty());
+                        Passage.empty(),(){
+                      widget.onDeleteTapped();
+                        });
               },
             ),
           ]),

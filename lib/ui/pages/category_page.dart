@@ -150,6 +150,39 @@ class _CategoryPageState extends State<CategoryPage>
                         slidableController: slidableController,
                         sharedCats: sharedCats,
                         sharedSubCats: sharedSubCats,
+                        onDeleteTapped: (){
+                          final scripture = BlocProvider.of<CategoriesBloc>(
+                                                      context)
+                                                  .state
+                                                  .selectedCategory!
+                                                  .verses![index];
+                           if (BlocProvider.of<CategoriesBloc>(context)
+                      .state
+                      .selectedCategory
+                      ?.pinned !=
+                  null) if (BlocProvider.of<CategoriesBloc>(context)
+                      .state
+                      .selectedCategory
+                      ?.pinned
+                      ?.id
+                      .toString() ==
+                  scripture.id.toString()) {
+                BlocProvider.of<CategoriesBloc>(context)
+                    .add(CategoriesEventPinOrUnpinVerse(pinOrUnpin: false));
+              }
+              
+              BlocProvider.of<ScripturesBloc>(context).add(
+                  ScripturesEventDeleteVerse(
+                      category: BlocProvider.of<CategoriesBloc>(context)
+                              .state
+                              .selectedCategory ??
+                          Category(),
+                      verse: scripture));
+
+              
+              Navigator.pop(context);
+              showNotificationDialog(context, "Scripture Deleted");
+                        },
                         onMoveTapped: () {
                           final oldCategoryId =
                               BlocProvider.of<CategoriesBloc>(context)
